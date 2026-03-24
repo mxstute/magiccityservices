@@ -7,7 +7,7 @@ const DARK2 = "#111827";
 const DARK3 = "#1E293B";
 const LIGHT = "#F8FAFC";
 const GRAY = "#94A3B8";
-const PHONE = "(305) 555-0199";
+const PHONE = "(305) 570-3041";
 
 // REPLACE with your actual Formspree form ID from formspree.io
 const FORMSPREE_BOOKING = "https://formspree.io/f/xqeyrgno";
