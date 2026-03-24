@@ -10,8 +10,8 @@ const GRAY = "#94A3B8";
 const PHONE = "(305) 555-0199";
 
 // REPLACE with your actual Formspree form ID from formspree.io
-const FORMSPREE_BOOKING = "https://formspree.io/f/YOUR_FORM_ID";
-const FORMSPREE_QUOTE = "https://formspree.io/f/YOUR_FORM_ID";
+const FORMSPREE_BOOKING = "https://formspree.io/f/xqeyrgno";
+const FORMSPREE_QUOTE = "https://formspree.io/f/xyknrbor";
 
 const services = [
   {
