@@ -736,7 +736,7 @@ function Footer() {
           <div>
             <h4 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: LIGHT, letterSpacing: 2, textTransform: "uppercase", margin: "0 0 16px" }}>Contact</h4>
             <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, color: GRAY, marginBottom: 10 }}>{PHONE}</div>
-            <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, color: GRAY, marginBottom: 10 }}>info@magiccityservices.com</div>
+            <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, color: GRAY, marginBottom: 10 }}>info@magiccityservicesmiami.com</div>
             <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, color: GRAY }}>Miami-Dade County, FL</div>
           </div>
           <div>

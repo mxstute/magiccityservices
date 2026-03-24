@@ -49,8 +49,8 @@ export default async function handler(req, res) {
         serviceAddress: address || '',
         package: packageName,
       },
-      success_url: `${req.headers.origin || 'https://magiccityservices.com'}?booking=success&package=${encodeURIComponent(packageName)}`,
-      cancel_url: `${req.headers.origin || 'https://magiccityservices.com'}?booking=cancelled`,
+      success_url: `${req.headers.origin || 'https://magiccityservicesmiami.com'}?booking=success&package=${encodeURIComponent(packageName)}`,
+      cancel_url: `${req.headers.origin || 'https://magiccityservicesmiami.com'}?booking=cancelled`,
     });
 
     res.status(200).json({ url: session.url });

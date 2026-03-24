@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://magiccityservices.com/sitemap.xml
+Sitemap: https://magiccityservicesmiami.com/sitemap.xml
