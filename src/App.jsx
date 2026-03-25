@@ -351,7 +351,7 @@ function BookingSystem() {
   if (submitted) {
     return (
       <section id="book-now" style={{ background: DARK2, padding: "100px max(24px,4vw)" }}>
-        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", background: DARK3, borderRadius: 24, padding: "60px 40px", border: "1px solid rgba(244,114,182,0.15)" }}>
+        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", background: DARK3, borderRadius: 24, padding: "48px max(20px, 4vw)", border: "1px solid rgba(244,114,182,0.15)" }}>
           <div style={{ fontSize: 56, marginBottom: 20 }}>🎉</div>
           <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Booking Confirmed!</h2>
           <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, color: GRAY, lineHeight: 1.7, marginBottom: 8 }}>
@@ -379,7 +379,7 @@ function BookingSystem() {
         </div>
 
         {/* Tab Buttons */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 28, padding: "6px", background: "rgba(255,255,255,0.02)", borderRadius: 16, border: "1px solid rgba(255,255,255,0.04)" }}>
+        <div style={{ display: "flex", gap: 8, marginBottom: 28, padding: "8px", background: "rgba(255,255,255,0.02)", borderRadius: 16, border: "1px solid rgba(255,255,255,0.04)" }}>
           {tabBtn("book", "Book Online", "📅")}
           {tabBtn("quote", "Get a Quote", "📝")}
           {tabBtn("call", "Call Now", "📞")}
@@ -387,7 +387,7 @@ function BookingSystem() {
 
         {/* ==================== BOOK ONLINE TAB ==================== */}
         {tab === "book" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "36px 32px", border: "1px solid rgba(255,255,255,0.04)" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "32px max(16px, 4vw)", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
 
             {/* Progress indicator */}
             <div style={{ display: "flex", gap: 8, marginBottom: 32 }}>
@@ -549,7 +549,7 @@ function BookingSystem() {
 
         {/* ==================== QUOTE TAB ==================== */}
         {tab === "quote" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "36px 32px", border: "1px solid rgba(255,255,255,0.04)" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "32px max(16px, 4vw)", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
             {quoteSubmitted ? (
               <div style={{ textAlign: "center", padding: "40px 0" }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
@@ -593,7 +593,7 @@ function BookingSystem() {
 
         {/* ==================== CALL TAB ==================== */}
         {tab === "call" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "48px 32px", border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "40px max(16px, 4vw)", border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
             <div style={{ fontSize: 56, marginBottom: 20 }}>📞</div>
             <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Talk to Us Now</h3>
             <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, color: GRAY, lineHeight: 1.7, marginBottom: 32, maxWidth: 400, margin: "0 auto 32px" }}>
