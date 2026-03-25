@@ -127,11 +127,17 @@ function Nav() {
     window.addEventListener("scroll", h);
     return () => window.removeEventListener("scroll", h);
   }, []);
-  const linkStyle = { color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: 1.5, textDecoration: "none", textTransform: "uppercase" };
+  const linkStyle = { color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: 1.5, textDecoration: "none", textTransform: "uppercase", transition: "color 0.2s" };
+  const links = [
+    { label: "Services", href: "#services" },
+    { label: "Book Now", href: "#book-now" },
+    { label: "Areas", href: "#areas" },
+    { label: "About", href: "#about" },
+  ];
   return (
-    <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "0 max(24px,4vw)", background: scrolled ? "rgba(11,17,32,0.95)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? "1px solid rgba(244,114,182,0.1)" : "none", transition: "all 0.4s ease" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
-        <a href="#hero" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}>
+    <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "0 max(16px,4vw)", background: scrolled ? "rgba(11,17,32,0.95)" : "transparent", backdropFilter: scrolled ? "blur(20px)" : "none", borderBottom: scrolled ? "1px solid rgba(244,114,182,0.1)" : "none", transition: "all 0.4s ease" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", height: 72 }}>
+        <a href="#hero" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10, justifySelf: "start" }}>
           <div style={{ width: 38, height: 38, borderRadius: 10, background: PINK, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ display: "flex", gap: 2, alignItems: "flex-end", height: 20 }}>
               {[12, 18, 14, 20, 16].map((h, i) => (<div key={i} style={{ width: 4, height: h, borderRadius: 1, background: i % 2 === 0 ? "#fff" : BLUE }} />))}
@@ -142,20 +148,28 @@ function Nav() {
             <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 9, fontWeight: 400, color: BLUE, letterSpacing: 3, lineHeight: 1.1 }}>SERVICES</div>
           </div>
         </a>
-        <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="nav-links-desktop">
-          {["Services", "Book Now", "Areas", "About"].map(t => (
-            <a key={t} href={`#${t.toLowerCase().replace(/ /g, "-")}`} style={linkStyle}>{t}</a>
+        <div className="nav-center-links" style={{ display: "flex", alignItems: "center", gap: 36 }}>
+          {links.map(l => (
+            <a key={l.label} href={l.href} style={linkStyle}
+              onMouseEnter={e => e.target.style.color = PINK}
+              onMouseLeave={e => e.target.style.color = LIGHT}>{l.label}</a>
           ))}
-          <PhoneButton size="sm" />
         </div>
-        <button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-btn" style={{ display: "none", background: "none", border: "none", color: LIGHT, fontSize: 28, cursor: "pointer", padding: 4 }}>
-          {menuOpen ? "✕" : "☰"}
-        </button>
+        <div style={{ justifySelf: "end", display: "flex", alignItems: "center", gap: 16 }}>
+          <a href={`tel:${PHONE.replace(/[^0-9]/g, "")}`} className="nav-phone-btn" style={{
+            display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 22px",
+            background: PINK, color: "#fff", border: "none", borderRadius: 50,
+            fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: "none",
+          }}>📞 {PHONE}</a>
+          <button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-btn" style={{
+            display: "none", background: "none", border: "none", color: LIGHT, fontSize: 28, cursor: "pointer", padding: 4,
+          }}>{menuOpen ? "✕" : "☰"}</button>
+        </div>
       </div>
       {menuOpen && (
         <div className="mobile-menu" style={{ padding: "20px 0 30px", display: "flex", flexDirection: "column", gap: 20, alignItems: "center", background: "rgba(11,17,32,0.98)", borderTop: "1px solid rgba(244,114,182,0.1)" }}>
-          {["Services", "Book Now", "Areas", "About"].map(t => (
-            <a key={t} href={`#${t.toLowerCase().replace(/ /g, "-")}`} onClick={() => setMenuOpen(false)} style={{ ...linkStyle, fontSize: 15 }}>{t}</a>
+          {links.map(l => (
+            <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)} style={{ ...linkStyle, fontSize: 15 }}>{l.label}</a>
           ))}
           <PhoneButton size="sm" />
         </div>
@@ -168,7 +182,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="hero" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(165deg, ${DARK} 0%, #0F1B2E 40%, #1A1035 100%)`, position: "relative", overflow: "hidden", padding: "100px max(24px,4vw) 60px" }}>
+    <section id="hero" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(165deg, ${DARK} 0%, #0F1B2E 40%, #1A1035 100%)`, position: "relative", overflow: "hidden", padding: "100px 24px 60px" }}>
       <div style={{ position: "absolute", top: "10%", right: "-5%", width: "50vw", height: "50vw", background: `radial-gradient(circle, rgba(244,114,182,0.08) 0%, transparent 70%)`, borderRadius: "50%" }} />
       <div style={{ position: "absolute", bottom: "5%", left: "-10%", width: "40vw", height: "40vw", background: `radial-gradient(circle, rgba(125,211,252,0.06) 0%, transparent 70%)`, borderRadius: "50%" }} />
       <div style={{ maxWidth: 800, textAlign: "center", position: "relative", zIndex: 1 }}>
@@ -201,7 +215,7 @@ function Hero() {
 
 function Services() {
   return (
-    <section id="services" style={{ background: DARK2, padding: "100px max(24px,4vw)" }}>
+    <section id="services" style={{ background: DARK2, padding: "100px 24px" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 64 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: PINK, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>What We Do</div>
@@ -350,8 +364,8 @@ function BookingSystem() {
   // ---- Success State ----
   if (submitted) {
     return (
-      <section id="book-now" style={{ background: DARK2, padding: "100px max(24px,4vw)" }}>
-        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", background: DARK3, borderRadius: 24, padding: "48px max(20px, 4vw)", border: "1px solid rgba(244,114,182,0.15)" }}>
+      <section id="book-now" style={{ background: DARK2, padding: "100px 24px" }}>
+        <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", background: DARK3, borderRadius: 24, padding: "48px clamp(20px, 5vw, 40px)", border: "1px solid rgba(244,114,182,0.15)" }}>
           <div style={{ fontSize: 56, marginBottom: 20 }}>🎉</div>
           <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Booking Confirmed!</h2>
           <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, color: GRAY, lineHeight: 1.7, marginBottom: 8 }}>
@@ -370,7 +384,7 @@ function BookingSystem() {
   }
 
   return (
-    <section id="book-now" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 100%)`, padding: "100px max(24px,4vw)" }}>
+    <section id="book-now" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 100%)`, padding: "100px 24px" }}>
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: PINK, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Get Started</div>
@@ -387,7 +401,7 @@ function BookingSystem() {
 
         {/* ==================== BOOK ONLINE TAB ==================== */}
         {tab === "book" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "32px max(16px, 4vw)", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "32px clamp(16px, 5vw, 32px)", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
 
             {/* Progress indicator */}
             <div style={{ display: "flex", gap: 8, marginBottom: 32 }}>
@@ -549,7 +563,7 @@ function BookingSystem() {
 
         {/* ==================== QUOTE TAB ==================== */}
         {tab === "quote" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "32px max(16px, 4vw)", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "32px clamp(16px, 5vw, 32px)", border: "1px solid rgba(255,255,255,0.04)", overflow: "hidden" }}>
             {quoteSubmitted ? (
               <div style={{ textAlign: "center", padding: "40px 0" }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
@@ -593,7 +607,7 @@ function BookingSystem() {
 
         {/* ==================== CALL TAB ==================== */}
         {tab === "call" && (
-          <div style={{ background: DARK3, borderRadius: 24, padding: "40px max(16px, 4vw)", border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
+          <div style={{ background: DARK3, borderRadius: 24, padding: "40px clamp(16px, 5vw, 32px)", border: "1px solid rgba(255,255,255,0.04)", textAlign: "center" }}>
             <div style={{ fontSize: 56, marginBottom: 20 }}>📞</div>
             <h3 style={{ fontFamily: "'Playfair Display',serif", fontSize: 28, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Talk to Us Now</h3>
             <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, color: GRAY, lineHeight: 1.7, marginBottom: 32, maxWidth: 400, margin: "0 auto 32px" }}>
@@ -632,7 +646,7 @@ function HowItWorks() {
     { num: "04", title: "Pay & Review", desc: "Flexible payment: card, cash, Zelle, CashApp. Leave us a review to help your neighbors find us." },
   ];
   return (
-    <section id="how-it-works" style={{ background: DARK2, padding: "100px max(24px,4vw)" }}>
+    <section id="how-it-works" style={{ background: DARK2, padding: "100px 24px" }}>
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 64 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: BLUE, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Simple Process</div>
@@ -658,7 +672,7 @@ function HowItWorks() {
 
 function AreasSection() {
   return (
-    <section id="areas" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 100%)`, padding: "100px max(24px,4vw)" }}>
+    <section id="areas" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 100%)`, padding: "100px 24px" }}>
       <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: PINK, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Coverage</div>
         <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(28px,4vw,44px)", fontWeight: 700, color: LIGHT, margin: "0 0 16px" }}>Service Areas</h2>
@@ -680,7 +694,7 @@ function AreasSection() {
 
 function About() {
   return (
-    <section id="about" style={{ background: DARK2, padding: "100px max(24px,4vw)" }}>
+    <section id="about" style={{ background: DARK2, padding: "100px 24px" }}>
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: BLUE, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>About Us</div>
@@ -712,7 +726,7 @@ function About() {
 
 function Footer() {
   return (
-    <footer style={{ background: DARK, padding: "60px max(24px,4vw) 30px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+    <footer style={{ background: DARK, padding: "60px 24px 30px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px,1fr))", gap: 40, marginBottom: 48 }}>
           <div>
@@ -776,8 +790,9 @@ export default function MagicCityServices() {
         body { background: ${DARK}; }
         ::selection { background: ${PINK}44; color: #fff; }
         @media (max-width: 768px) {
-          .nav-links-desktop { display: none !important; }
+          .nav-center-links { display: none !important; }
           .mobile-menu-btn { display: block !important; }
+          .nav-phone-btn { display: none !important; }
         }
         @media (min-width: 769px) {
           .mobile-menu { display: none !important; }
