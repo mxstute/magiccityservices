@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const PINK = "#F472B6";
 const BLUE = "#7DD3FC";
@@ -9,9 +9,68 @@ const LIGHT = "#F8FAFC";
 const GRAY = "#94A3B8";
 const PHONE = "(305) 570-3041";
 
+// REPLACE with your Google Maps API key (enable Places API in Google Cloud Console)
+const GOOGLE_MAPS_KEY = "AIzaSyAMDTN_tRU_MIKTh29BHZvrWRdOaYHZc98";
+
 // REPLACE with your actual Formspree form ID from formspree.io
 const FORMSPREE_BOOKING = "https://formspree.io/f/xqeyrgno";
 const FORMSPREE_QUOTE = "https://formspree.io/f/xyknrbor";
+
+// Google Places Autocomplete loader
+function useGooglePlaces() {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    if (!GOOGLE_MAPS_KEY || GOOGLE_MAPS_KEY === "REPLACE_ME") return;
+    if (window.google?.maps?.places) { setLoaded(true); return; }
+    if (document.querySelector('script[src*="maps.googleapis"]')) return;
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_KEY}&libraries=places`;
+    script.async = true;
+    script.onload = () => setLoaded(true);
+    document.head.appendChild(script);
+  }, []);
+  return loaded;
+}
+
+function AddressAutocomplete({ label, value, onChange, placeholder = "Start typing your address..." }) {
+  const inputRef = useRef(null);
+  const autocompleteRef = useRef(null);
+  const placesLoaded = useGooglePlaces();
+
+  useEffect(() => {
+    if (!placesLoaded || !inputRef.current || autocompleteRef.current) return;
+    const ac = new window.google.maps.places.Autocomplete(inputRef.current, {
+      componentRestrictions: { country: "us" },
+      fields: ["formatted_address", "geometry"],
+      types: ["address"],
+    });
+    ac.setBounds(new window.google.maps.LatLngBounds(
+      { lat: 25.3, lng: -80.9 },
+      { lat: 26.0, lng: -80.0 }
+    ));
+    ac.addListener("place_changed", () => {
+      const place = ac.getPlace();
+      if (place?.formatted_address) onChange(place.formatted_address);
+    });
+    autocompleteRef.current = ac;
+  }, [placesLoaded]);
+
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
+      <input ref={inputRef} type="text" placeholder={placeholder} value={value}
+        onChange={e => onChange(e.target.value)}
+        style={{
+          width: "100%", padding: "13px 16px", borderRadius: 12,
+          border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)",
+          color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15,
+          outline: "none", boxSizing: "border-box",
+        }}
+        onFocus={e => e.target.style.borderColor = `${PINK}55`}
+        onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.08)"} />
+    </div>
+  );
+}
 
 const services = [
   {
@@ -528,7 +587,7 @@ function BookingSystem() {
                 <Input label="Full Name" type="text" placeholder="Your full name" value={formData.name} onChange={e => updateForm("name", e.target.value)} />
                 <Input label="Phone" type="tel" placeholder="(305) 000-0000" value={formData.phone} onChange={e => updateForm("phone", e.target.value)} />
                 <Input label="Email" type="email" placeholder="your@email.com" value={formData.email} onChange={e => updateForm("email", e.target.value)} />
-                <Input label="Service Address" type="text" placeholder="Where should we come?" value={formData.address} onChange={e => updateForm("address", e.target.value)} />
+                <AddressAutocomplete label="Service Address" value={formData.address} onChange={v => updateForm("address", v)} placeholder="Start typing your address..." />
                 {selectedService?.name === "Mobile Detailing" && (
                   <Input label="Vehicle Info" type="text" placeholder="Year, make, model, color" value={formData.vehicle} onChange={e => updateForm("vehicle", e.target.value)} />
                 )}
@@ -797,6 +856,13 @@ export default function MagicCityServices() {
         @media (min-width: 769px) {
           .mobile-menu { display: none !important; }
         input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
+        .pac-container { background: #1E293B !important; border: 1px solid rgba(244,114,182,0.15) !important; border-radius: 12px !important; margin-top: 4px !important; font-family: "Outfit", sans-serif !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important; }
+        .pac-item { padding: 10px 16px !important; border-top: 1px solid rgba(255,255,255,0.06) !important; color: #F8FAFC !important; cursor: pointer !important; font-size: 14px !important; }
+        .pac-item:hover { background: rgba(244,114,182,0.08) !important; }
+        .pac-item-query { color: #F472B6 !important; font-weight: 600 !important; }
+        .pac-matched { color: #7DD3FC !important; }
+        .pac-icon { display: none !important; }
+        .pac-item-selected { background: rgba(244,114,182,0.12) !important; }
         }
       `}</style>
       <Nav />
