@@ -1,7 +1,3 @@
-// /api/create-checkout.js
-// Vercel Serverless Function — Creates a Stripe Checkout Session
-// Set STRIPE_SECRET_KEY in Vercel Environment Variables
-
 import Stripe from 'stripe';
 
 export default async function handler(req, res) {
@@ -13,7 +9,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   if (!process.env.STRIPE_SECRET_KEY) {
-    return res.status(500).json({ error: 'Stripe not configured' });
+    return res.status(500).json({ error: 'Stripe not configured - add STRIPE_SECRET_KEY to Vercel env vars' });
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -22,7 +18,7 @@ export default async function handler(req, res) {
     const { packageName, price, customerName, customerEmail, customerPhone, vehicleInfo, date, time, address } = req.body;
 
     if (!packageName || !price || !customerEmail) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: 'Missing required fields: packageName, price, customerEmail' });
     }
 
     const amountInCents = Math.round(price * 100);

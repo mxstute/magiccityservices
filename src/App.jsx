@@ -398,12 +398,15 @@ function BookingSystem() {
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+        return;
       } else {
-        // Stripe not configured yet — fall back to confirmation
+        // Stripe returned but no URL — show confirmation as fallback
+        console.error("Stripe response:", data);
         setSubmitted(true);
       }
     } catch (e) {
-      // Stripe not set up yet — booking still went to Formspree
+      console.error("Stripe deposit error:", e);
+      // Booking already went to Formspree — show confirmation
       setSubmitted(true);
     }
     setSubmitting(false);
