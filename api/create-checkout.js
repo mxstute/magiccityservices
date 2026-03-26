@@ -1,9 +1,10 @@
 // /api/create-checkout.js
-// Vercel Serverless Function — Creates a Stripe Checkout Session for detailing deposits
-// Set STRIPE_SECRET_KEY in Vercel Environment Variables (Settings → Environment Variables)
+// Vercel Serverless Function — Creates a Stripe Checkout Session
+// Set STRIPE_SECRET_KEY in Vercel Environment Variables
+
+import Stripe from 'stripe';
 
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -11,7 +12,11 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return res.status(500).json({ error: 'Stripe not configured' });
+  }
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   try {
     const { packageName, price, customerName, customerEmail, customerPhone, vehicleInfo, date, time, address } = req.body;
@@ -20,7 +25,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Convert dollar amount to cents for Stripe
     const amountInCents = Math.round(price * 100);
 
     const session = await stripe.checkout.sessions.create({
