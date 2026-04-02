@@ -153,7 +153,7 @@ function PhoneButton({ variant = "pink", size = "lg", fullWidth = false }) {
       border: isPink ? "none" : `1.5px solid ${PINK}`,
       borderRadius: 50, fontFamily: "'Outfit', sans-serif",
       fontSize: size === "lg" ? 17 : 15, fontWeight: 600,
-      letterSpacing: 0.5, textDecoration: "none", cursor: "pointer",
+      letterSpacing: 0.5, textDecoration: "none", cursor: "pointer", transition: "all 0.2s ease", transition: "all 0.2s ease",
       width: fullWidth ? "100%" : "auto", justifyContent: "center",
     }}>
       📞 {PHONE}
@@ -228,7 +228,7 @@ function Nav() {
         </a>
         <div className="nav-center-links" style={{ display: "flex", alignItems: "center", gap: 36 }}>
           {links.map(l => (
-            <a key={l.label} href={l.href} style={linkStyle}}
+            <a key={l.label} href={l.href} style={linkStyle}
               onMouseEnter={e => e.target.style.color = PINK}
               onMouseLeave={e => e.target.style.color = LIGHT}>{l.label}</a>
           ))}
@@ -238,7 +238,10 @@ function Nav() {
             display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 22px",
             background: PINK, color: "#fff", border: "none", borderRadius: 50,
             fontFamily: "'Outfit',sans-serif", fontSize: 14, fontWeight: 600, textDecoration: "none",
-          }}>📞 {PHONE}</a>
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.05)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(244,114,182,0.35)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}>📞 {PHONE}</a>
           <button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-btn" style={{
             display: "none", background: "none", border: "none", color: LIGHT, fontSize: 28, cursor: "pointer", padding: 4,
           }}>{menuOpen ? "✕" : "☰"}</button>
@@ -273,7 +276,9 @@ function Hero() {
           Junk removal, pressure washing, and mobile detailing — all from one trusted team. Professional service, transparent pricing, guaranteed satisfaction.
         </p>
         <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="#book-now" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "16px 36px", background: PINK, color: "#fff", borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 600, textDecoration: "none", letterSpacing: 0.5 }}>Book Online →</a>
+          <a href="#book-now" style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "16px 36px", background: PINK, color: "#fff", borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 17, fontWeight: 600, textDecoration: "none", letterSpacing: 0.5, transition: "all 0.2s ease" }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; e.currentTarget.style.boxShadow = "0 6px 24px rgba(244,114,182,0.35)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}>Book Online →</a>
           <PhoneButton variant="outline" size="lg" />
         </div>
         <div style={{ display: "flex", gap: 40, justifyContent: "center", marginTop: 56, flexWrap: "wrap" }}>
@@ -301,7 +306,7 @@ function Services() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {services.map(s => (
-            <div key={s.name} style={{ background: DARK3, borderRadius: 20, padding: 36, position: "relative", overflow: "hidden", border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.3s ease", cursor: "pointer" }}
+            <div key={s.name} style={{ background: DARK3, borderRadius: 20, padding: 36, position: "relative", overflow: "hidden", border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.3s ease" }}
               onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.2)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(244,114,182,0.12)"; }}
               onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, background: `radial-gradient(circle, ${s.accent}11 0%, transparent 70%)`, borderRadius: "50%" }} />
@@ -318,7 +323,9 @@ function Services() {
               </ul>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 600, color: LIGHT }}>{s.price}</span>
-                <a href="#book-now" style={{ padding: "10px 22px", borderRadius: 50, background: `${s.accent}18`, border: `1px solid ${s.accent}44`, color: s.accent, fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+                <a href="#book-now" style={{ padding: "10px 22px", borderRadius: 50, background: `${s.accent}18`, border: `1px solid ${s.accent}44`, color: s.accent, fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 600, textDecoration: "none", transition: "all 0.2s ease" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.06)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}>
                   Book Now →
                 </a>
               </div>
@@ -611,7 +618,7 @@ function BookingSystem() {
                   {selectedPackage?.deposit ? (
                     <>
                       <button onClick={handleStripeDeposit} disabled={submitting || !formData.name || !formData.phone || !formData.email || !formData.address}
-                        style={{ width: "100%", padding: "16px", borderRadius: 50, border: "none", background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", opacity: submitting ? 0.6 : 1 }}>
+                        style={{ width: "100%", padding: "16px", borderRadius: 50, border: "none", background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, transition: "all 0.2s ease", color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", opacity: submitting ? 0.6 : 1 }}>
                         {submitting ? "Processing..." : `Pay $${selectedPackage.deposit} Deposit & Confirm`}
                       </button>
                       <button onClick={handleBookingSubmit} disabled={submitting || !formData.name || !formData.phone || !formData.email || !formData.address}
@@ -621,7 +628,7 @@ function BookingSystem() {
                     </>
                   ) : (
                     <button onClick={handleBookingSubmit} disabled={submitting || !formData.name || !formData.phone || !formData.email || !formData.address}
-                      style={{ width: "100%", padding: "16px", borderRadius: 50, border: "none", background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", opacity: submitting ? 0.6 : 1 }}>
+                      style={{ width: "100%", padding: "16px", borderRadius: 50, border: "none", background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, transition: "all 0.2s ease", color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", opacity: submitting ? 0.6 : 1 }}>
                       {submitting ? "Submitting..." : "Confirm Booking — Free On-Site Estimate"}
                     </button>
                   )}
@@ -670,7 +677,7 @@ function BookingSystem() {
                   <Input label="Service Address / Zip" name="address" type="text" placeholder="Miami, FL 33101" />
                 </div>
                 <button type="submit" disabled={submitting}
-                  style={{ width: "100%", padding: "16px", borderRadius: 50, border: "none", background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", marginTop: 8, opacity: submitting ? 0.6 : 1 }}>
+                  style={{ width: "100%", padding: "16px", borderRadius: 50, border: "none", background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, transition: "all 0.2s ease", color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", marginTop: 8, opacity: submitting ? 0.6 : 1 }}>
                   {submitting ? "Sending..." : "Submit Quote Request"}
                 </button>
               </form>
@@ -688,7 +695,7 @@ function BookingSystem() {
             </p>
             <a href={`tel:${PHONE.replace(/[^0-9]/g, "")}`} style={{
               display: "inline-flex", alignItems: "center", gap: 12, padding: "20px 48px",
-              background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, color: "#fff",
+              background: `linear-gradient(135deg, ${PINK}, #E04DA0)`, transition: "all 0.2s ease", color: "#fff",
               borderRadius: 50, fontFamily: "'Outfit',sans-serif", fontSize: 24, fontWeight: 700,
               textDecoration: "none", letterSpacing: 0.5,
             }}>
@@ -752,7 +759,9 @@ function AreasSection() {
         <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 16, color: GRAY, marginBottom: 40 }}>We proudly serve all of Miami-Dade County and surrounding areas.</p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
           {areas.map(a => (
-            <span key={a} style={{ padding: "8px 18px", borderRadius: 50, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 500, color: "#CBD5E1" }}>{a}</span>
+            <span key={a} style={{ padding: "8px 18px", borderRadius: 50, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", fontFamily: "'Outfit',sans-serif", fontSize: 13, fontWeight: 500, color: "#CBD5E1", transition: "all 0.25s ease", cursor: "default" }}
+              onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.35)"; e.currentTarget.style.background = "rgba(244,114,182,0.06)"; e.currentTarget.style.color = "#F472B6"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.06)"; e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#CBD5E1"; e.currentTarget.style.transform = "translateY(0)"; }}>{a}</span>
           ))}
         </div>
         <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, color: GRAY, marginTop: 32 }}>
@@ -785,9 +794,9 @@ function About() {
             { icon: "⭐", title: "5-Star Rated Service", desc: "Hundreds of satisfied customers across Miami-Dade. Our reviews speak for themselves — quality you can trust." },
             { icon: "💰", title: "Transparent Pricing", desc: "No hidden fees, no surprises. You get a clear quote before we start — and that's the price you pay." },
           ].map(f => (
-            <div key={f.title} style={{ background: DARK3, borderRadius: 16, padding: 28, border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.3s ease", cursor: "default" }}
-              onMouseEnter={e => { e.currentTarget.style.border = `1px solid ${PINK}33`; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 8px 32px rgba(244,114,182,0.12)`; e.currentTarget.style.background = "rgba(30,41,59,0.8)"; }}
-              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = DARK3; }}>
+            <div key={f.title} style={{ background: DARK3, borderRadius: 16, padding: 28, border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.3s ease" }}
+              onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.2)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(244,114,182,0.12)"; }}
+              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
               <h4 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 600, color: LIGHT, margin: "0 0 6px" }}>{f.title}</h4>
               <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: GRAY, lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
