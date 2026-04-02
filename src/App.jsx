@@ -608,7 +608,7 @@ function BookingSystem() {
                 <Input label="Full Name" type="text" placeholder="Your full name" value={formData.name} onChange={e => updateForm("name", e.target.value)} />
                 <Input label="Phone" type="tel" placeholder="(305) 000-0000" value={formData.phone} onChange={e => updateForm("phone", e.target.value)} />
                 <Input label="Email" type="email" placeholder="your@email.com" value={formData.email} onChange={e => updateForm("email", e.target.value)} />
-                <Input label="Service Address" type="text" placeholder="Full address in Miami-Dade" value={formData.address} onChange={e => updateForm("address", e.target.value)} />
+                <AddressAutocomplete label="Service Address" value={formData.address} onChange={v => updateForm("address", v)} placeholder="Start typing your address..." />
                 {selectedService?.name === "Mobile Detailing" && (
                   <Input label="Vehicle Info" type="text" placeholder="Year, make, model, color" value={formData.vehicle} onChange={e => updateForm("vehicle", e.target.value)} />
                 )}
