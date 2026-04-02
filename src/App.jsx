@@ -228,7 +228,7 @@ function Nav() {
         </a>
         <div className="nav-center-links" style={{ display: "flex", alignItems: "center", gap: 36 }}>
           {links.map(l => (
-            <a key={l.label} href={l.href} style={linkStyle}
+            <a key={l.label} href={l.href} style={linkStyle}}
               onMouseEnter={e => e.target.style.color = PINK}
               onMouseLeave={e => e.target.style.color = LIGHT}>{l.label}</a>
           ))}
@@ -301,7 +301,7 @@ function Services() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {services.map(s => (
-            <div key={s.name} style={{ background: DARK3, borderRadius: 20, padding: 36, position: "relative", overflow: "hidden", border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.3s ease", cursor: "pointer" }
+            <div key={s.name} style={{ background: DARK3, borderRadius: 20, padding: 36, position: "relative", overflow: "hidden", border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.3s ease", cursor: "pointer" }}
               onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.2)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(244,114,182,0.12)"; }}
               onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, background: `radial-gradient(circle, ${s.accent}11 0%, transparent 70%)`, borderRadius: "50%" }} />
