@@ -301,7 +301,9 @@ function Services() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {services.map(s => (
-            <div key={s.name} style={{ background: DARK3, borderRadius: 20, padding: 36, position: "relative", overflow: "hidden", border: "1px solid rgba(255,255,255,0.04)" }}>
+            <div key={s.name} style={{ background: DARK3, borderRadius: 20, padding: 36, position: "relative", overflow: "hidden", border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.3s ease", cursor: "pointer" }
+              onMouseEnter={e => { e.currentTarget.style.border = "1px solid rgba(244,114,182,0.2)"; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(244,114,182,0.12)"; }}
+              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
               <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, background: `radial-gradient(circle, ${s.accent}11 0%, transparent 70%)`, borderRadius: "50%" }} />
               <div style={{ fontSize: 40, marginBottom: 16 }}>{s.emoji}</div>
               <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 10, fontWeight: 600, color: s.accent, letterSpacing: 3, marginBottom: 8 }}>{s.tag}</div>
@@ -783,7 +785,9 @@ function About() {
             { icon: "⭐", title: "5-Star Rated Service", desc: "Hundreds of satisfied customers across Miami-Dade. Our reviews speak for themselves — quality you can trust." },
             { icon: "💰", title: "Transparent Pricing", desc: "No hidden fees, no surprises. You get a clear quote before we start — and that's the price you pay." },
           ].map(f => (
-            <div key={f.title} style={{ background: DARK3, borderRadius: 16, padding: 28, border: "1px solid rgba(255,255,255,0.04)" }}>
+            <div key={f.title} style={{ background: DARK3, borderRadius: 16, padding: 28, border: "1px solid rgba(255,255,255,0.04)", transition: "all 0.3s ease", cursor: "default" }}
+              onMouseEnter={e => { e.currentTarget.style.border = `1px solid ${PINK}33`; e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = `0 8px 32px rgba(244,114,182,0.12)`; e.currentTarget.style.background = "rgba(30,41,59,0.8)"; }}
+              onMouseLeave={e => { e.currentTarget.style.border = "1px solid rgba(255,255,255,0.04)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = DARK3; }}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
               <h4 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 15, fontWeight: 600, color: LIGHT, margin: "0 0 6px" }}>{f.title}</h4>
               <p style={{ fontFamily: "'Outfit',sans-serif", fontSize: 13, color: GRAY, lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
