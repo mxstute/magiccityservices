@@ -71,18 +71,24 @@ function AddressAutocomplete({ label, value, onChange, placeholder = "Start typi
     }
   }, [placesLoaded]);
 
+  const [editable, setEditable] = useState(false);
   return (
     <div style={{ marginBottom: 16 }}>
       <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
-      <input ref={inputRef} type="search" name={"addr" + Date.now()} data-lpignore="true" role="combobox" aria-autocomplete="list" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder={placeholder}
+      <input style={{ display: "none" }} type="text" name="street-address" tabIndex={-1} />
+      <input ref={inputRef} type="text" data-lpignore="true" autoCorrect="off" autoCapitalize="off" spellCheck="false"
+        placeholder={placeholder}
         defaultValue={value}
+        readOnly={!editable}
+        onTouchStart={() => { setEditable(true); setTimeout(() => inputRef.current?.focus(), 50); }}
+        onMouseDown={() => { setEditable(true); }}
         onChange={e => onChange(e.target.value)}
         autoComplete="off"
         style={{
           width: "100%", padding: "13px 16px", borderRadius: 12,
           border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)",
           color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15,
-          outline: "none", boxSizing: "border-box",
+          outline: "none", boxSizing: "border-box", WebkitUserSelect: "text",
         }}
         onFocus={e => e.target.style.borderColor = `${PINK}55`}
         onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.08)"} />
