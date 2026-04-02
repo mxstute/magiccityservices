@@ -766,7 +766,7 @@ function AreasSection() {
 function About() {
   return (
     <section id="about" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 30%, ${DARK2} 70%, ${DARK} 100%)`, padding: "100px 24px" }}>
-      <div style={{ maxWidth: 800, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: BLUE, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>About Us</div>
           <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(28px,4vw,44px)", fontWeight: 700, color: LIGHT, margin: "0 0 20px" }}>Built for Miami</h2>
@@ -774,12 +774,14 @@ function About() {
             Magic City Services was founded with one mission: make it effortless for Miami homeowners and businesses to get quality service without the runaround. We connect you with vetted, insured professionals who show up on time and deliver results — every single time.
           </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))", gap: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px,1fr))", gap: 20 }}>
           {[
             { icon: "🛡️", title: "Licensed & Insured", desc: "Every job is backed by our general liability coverage. Your property is protected." },
             { icon: "⚡", title: "Fast Response", desc: "We respond to every inquiry within minutes. Same-day service available for most jobs." },
             { icon: "💯", title: "Satisfaction Guaranteed", desc: "Not happy? We'll make it right. Our reputation is built on every single job." },
             { icon: "💳", title: "Flexible Payment", desc: "We accept cards, cash, Zelle, and CashApp. Pay online or on-site — your choice." },
+            { icon: "⭐", title: "5-Star Rated Service", desc: "Hundreds of satisfied customers across Miami-Dade. Our reviews speak for themselves — quality you can trust." },
+            { icon: "💰", title: "Transparent Pricing", desc: "No hidden fees, no surprises. You get a clear quote before we start — and that's the price you pay." },
           ].map(f => (
             <div key={f.title} style={{ background: DARK3, borderRadius: 16, padding: 28, border: "1px solid rgba(255,255,255,0.04)" }}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>{f.icon}</div>
