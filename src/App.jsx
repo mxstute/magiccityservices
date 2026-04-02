@@ -27,7 +27,7 @@ function useGooglePlaces() {
     script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_KEY}&libraries=places`;
     script.async = true;
     script.onload = () => { try { if (window.google?.maps?.places) setLoaded(true); } catch(e) {} };
-    script.onerror = () => {};
+    script.onerror = (e) => { console.warn("Google Maps script failed to load:", e); };
     document.head.appendChild(script);
   }, []);
   return loaded;
@@ -72,10 +72,10 @@ function AddressAutocomplete({ label, value, onChange, placeholder = "Start typi
   return (
     <div style={{ marginBottom: 16 }}>
       <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
-      <input ref={inputRef} type="text" placeholder={placeholder}
+      <input ref={inputRef} type="text" name="service-addr-autocomplete" placeholder={placeholder}
         defaultValue={value}
         onChange={e => onChange(e.target.value)}
-        autoComplete="off"
+        autoComplete="nope"
         style={{
           width: "100%", padding: "13px 16px", borderRadius: 12,
           border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)",
@@ -959,7 +959,14 @@ export default function MagicCityServices() {
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; padding: 4px; }
         select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%2394A3B8'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: right 16px center !important; }
         select option { background: #1E293B; color: #F8FAFC; }
-        .pac-container { background: #1E293B !important; border: 1px solid rgba(244,114,182,0.15) !important; border-radius: 12px !important; margin-top: 4px !important; font-family: "Outfit", sans-serif !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important; }
+        .pac-container { background: #1E293B !important; border: 1px solid rgba(244,114,182,0.15) !important; border-radius: 12px !important; margin-top: 4px !important; font-family: "Outfit", sans-serif !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important; z-index: 99999 !important; padding: 4px 0 !important; }
+        .pac-item { padding: 10px 16px !important; border-top: 1px solid rgba(255,255,255,0.04) !important; color: #CBD5E1 !important; cursor: pointer !important; font-size: 14px !important; }
+        .pac-item:first-child { border-top: none !important; }
+        .pac-item:hover { background: rgba(244,114,182,0.08) !important; }
+        .pac-item-query { color: #F8FAFC !important; font-weight: 600 !important; }
+        .pac-matched { color: #F472B6 !important; }
+        .pac-icon { display: none !important; }
+        .pac-logo::after { display: none !important; }
         .pac-item { padding: 10px 16px !important; border-top: 1px solid rgba(255,255,255,0.06) !important; color: #F8FAFC !important; cursor: pointer !important; font-size: 14px !important; }
         .pac-item:hover { background: rgba(244,114,182,0.08) !important; }
         .pac-item-query { color: #F472B6 !important; font-weight: 600 !important; }
