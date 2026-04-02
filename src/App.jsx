@@ -290,7 +290,7 @@ function Hero() {
 
 function Services() {
   return (
-    <section id="services" style={{ background: DARK2, padding: "100px 24px" }}>
+    <section id="services" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 30%, ${DARK2} 70%, ${DARK} 100%)`, padding: "100px 24px" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 64 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: PINK, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>What We Do</div>
@@ -442,7 +442,7 @@ function BookingSystem() {
   // ---- Success State ----
   if (submitted) {
     return (
-      <section id="book-now" style={{ background: DARK2, padding: "100px 24px" }}>
+      <section id="book-now" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 30%, ${DARK2} 70%, ${DARK} 100%)`, padding: "100px 24px" }}>
         <div style={{ maxWidth: 560, margin: "0 auto", textAlign: "center", background: DARK3, borderRadius: 24, padding: "44px 28px", border: "1px solid rgba(244,114,182,0.15)" }}>
           <div style={{ fontSize: 56, marginBottom: 20 }}>🎉</div>
           <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: 32, fontWeight: 700, color: LIGHT, margin: "0 0 12px" }}>Booking Confirmed!</h2>
@@ -462,7 +462,7 @@ function BookingSystem() {
   }
 
   return (
-    <section id="book-now" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 100%)`, padding: "100px 24px" }}>
+    <section id="book-now" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 35%, ${DARK2} 65%, ${DARK} 100%)`, padding: "100px 24px" }}>
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: PINK, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Get Started</div>
@@ -724,7 +724,7 @@ function HowItWorks() {
     { num: "04", title: "Pay & Review", desc: "Flexible payment: card, cash, Zelle, CashApp. Leave us a review to help your neighbors find us." },
   ];
   return (
-    <section id="how-it-works" style={{ background: DARK2, padding: "100px 24px" }}>
+    <section id="how-it-works" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 30%, ${DARK2} 70%, ${DARK} 100%)`, padding: "100px 24px" }}>
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 64 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: BLUE, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Simple Process</div>
@@ -750,7 +750,7 @@ function HowItWorks() {
 
 function AreasSection() {
   return (
-    <section id="areas" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 100%)`, padding: "100px 24px" }}>
+    <section id="areas" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 35%, ${DARK2} 65%, ${DARK} 100%)`, padding: "100px 24px" }}>
       <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
         <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: PINK, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>Coverage</div>
         <h2 style={{ fontFamily: "'Playfair Display',serif", fontSize: "clamp(28px,4vw,44px)", fontWeight: 700, color: LIGHT, margin: "0 0 16px" }}>Service Areas</h2>
@@ -772,7 +772,7 @@ function AreasSection() {
 
 function About() {
   return (
-    <section id="about" style={{ background: DARK2, padding: "100px 24px" }}>
+    <section id="about" style={{ background: `linear-gradient(180deg, ${DARK} 0%, ${DARK2} 30%, ${DARK2} 70%, ${DARK} 100%)`, padding: "100px 24px" }}>
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 600, color: BLUE, letterSpacing: 3, textTransform: "uppercase", marginBottom: 12 }}>About Us</div>
@@ -804,7 +804,7 @@ function About() {
 
 function Footer() {
   return (
-    <footer style={{ background: DARK, padding: "60px 24px 30px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+    <footer style={{ background: DARK, padding: "60px 24px 30px" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px,1fr))", gap: 40, marginBottom: 48 }}>
           <div>
@@ -823,7 +823,18 @@ function Footer() {
           </div>
           <div>
             <h4 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: LIGHT, letterSpacing: 2, textTransform: "uppercase", margin: "0 0 16px" }}>Services</h4>
-            {["Junk Removal", "Pressure Washing", "Mobile Detailing"].map(s => (<div key={s} style={{ fontFamily: "'Outfit',sans-serif", fontSize: 14, color: GRAY, marginBottom: 10 }}>{s}</div>))}
+            {[
+              { name: "Junk Removal", url: "https://magiccityjunkremovalmiami.com", icon: "🚛" },
+              { name: "Pressure Washing", url: "https://magiccitypressurewashingmiami.com", icon: "💦" },
+              { name: "Mobile Detailing", url: "https://magiccitydetailingmiami.com", icon: "✨" },
+            ].map(s => (
+              <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
+                style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Outfit',sans-serif", fontSize: 14, color: GRAY, marginBottom: 12, textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={e => { e.target.style.color = PINK; e.target.style.paddingLeft = "4px"; }}
+                onMouseLeave={e => { e.target.style.color = GRAY; e.target.style.paddingLeft = "0px"; }}>
+                <span>{s.icon}</span> {s.name} <span style={{ fontSize: 11, opacity: 0.5 }}>→</span>
+              </a>
+            ))}
           </div>
           <div>
             <h4 style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, fontWeight: 700, color: LIGHT, letterSpacing: 2, textTransform: "uppercase", margin: "0 0 16px" }}>Contact</h4>
