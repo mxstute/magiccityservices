@@ -136,7 +136,65 @@ const services = [
   },
 ];
 
-const timeSlots = ["8:00 AM","8:15 AM","8:30 AM","8:45 AM","9:00 AM","9:15 AM","9:30 AM","9:45 AM","10:00 AM","10:15 AM","10:30 AM","10:45 AM","11:00 AM","11:15 AM","11:30 AM","11:45 AM","12:00 PM","12:15 PM","12:30 PM","12:45 PM","1:00 PM","1:15 PM","1:30 PM","1:45 PM","2:00 PM","2:15 PM","2:30 PM","2:45 PM","3:00 PM","3:15 PM","3:30 PM","3:45 PM","4:00 PM","4:15 PM","4:30 PM","4:45 PM","5:00 PM"];
+const timeSlots = [
+  { value: "7:00 AM", label: "7:00 AM — Early Bird (+$25)" },
+  { value: "7:15 AM", label: "7:15 AM — Early Bird (+$25)" },
+  { value: "7:30 AM", label: "7:30 AM — Early Bird (+$25)" },
+  { value: "7:45 AM", label: "7:45 AM — Early Bird (+$25)" },
+  { value: "8:00 AM", label: "8:00 AM" },
+  { value: "8:15 AM", label: "8:15 AM" },
+  { value: "8:30 AM", label: "8:30 AM" },
+  { value: "8:45 AM", label: "8:45 AM" },
+  { value: "9:00 AM", label: "9:00 AM" },
+  { value: "9:15 AM", label: "9:15 AM" },
+  { value: "9:30 AM", label: "9:30 AM" },
+  { value: "9:45 AM", label: "9:45 AM" },
+  { value: "10:00 AM", label: "10:00 AM" },
+  { value: "10:15 AM", label: "10:15 AM" },
+  { value: "10:30 AM", label: "10:30 AM" },
+  { value: "10:45 AM", label: "10:45 AM" },
+  { value: "11:00 AM", label: "11:00 AM" },
+  { value: "11:15 AM", label: "11:15 AM" },
+  { value: "11:30 AM", label: "11:30 AM" },
+  { value: "11:45 AM", label: "11:45 AM" },
+  { value: "12:00 PM", label: "12:00 PM" },
+  { value: "12:15 PM", label: "12:15 PM" },
+  { value: "12:30 PM", label: "12:30 PM" },
+  { value: "12:45 PM", label: "12:45 PM" },
+  { value: "1:00 PM", label: "1:00 PM" },
+  { value: "1:15 PM", label: "1:15 PM" },
+  { value: "1:30 PM", label: "1:30 PM" },
+  { value: "1:45 PM", label: "1:45 PM" },
+  { value: "2:00 PM", label: "2:00 PM" },
+  { value: "2:15 PM", label: "2:15 PM" },
+  { value: "2:30 PM", label: "2:30 PM" },
+  { value: "2:45 PM", label: "2:45 PM" },
+  { value: "3:00 PM", label: "3:00 PM" },
+  { value: "3:15 PM", label: "3:15 PM" },
+  { value: "3:30 PM", label: "3:30 PM" },
+  { value: "3:45 PM", label: "3:45 PM" },
+  { value: "4:00 PM", label: "4:00 PM" },
+  { value: "4:15 PM", label: "4:15 PM" },
+  { value: "4:30 PM", label: "4:30 PM" },
+  { value: "4:45 PM", label: "4:45 PM" },
+  { value: "5:00 PM", label: "5:00 PM" },
+  { value: "5:15 PM", label: "5:15 PM" },
+  { value: "5:30 PM", label: "5:30 PM" },
+  { value: "5:45 PM", label: "5:45 PM" },
+  { value: "6:00 PM", label: "6:00 PM — After Hours (+$25)" },
+  { value: "6:15 PM", label: "6:15 PM — After Hours (+$25)" },
+  { value: "6:30 PM", label: "6:30 PM — After Hours (+$25)" },
+  { value: "6:45 PM", label: "6:45 PM — After Hours (+$25)" },
+  { value: "7:00 PM", label: "7:00 PM — After Hours (+$25)" },
+  { value: "7:15 PM", label: "7:15 PM — After Hours (+$25)" },
+  { value: "7:30 PM", label: "7:30 PM — After Hours (+$25)" },
+  { value: "7:45 PM", label: "7:45 PM — After Hours (+$25)" },
+  { value: "8:00 PM", label: "8:00 PM — After Hours (+$25)" },
+  { value: "8:15 PM", label: "8:15 PM — After Hours (+$25)" },
+  { value: "8:30 PM", label: "8:30 PM — After Hours (+$25)" },
+  { value: "8:45 PM", label: "8:45 PM — After Hours (+$25)" },
+  { value: "9:00 PM", label: "9:00 PM — After Hours (+$25)" },
+];
 
 const areas = ["Miami", "Miami Beach", "Coral Gables", "Hialeah", "Doral", "Kendall", "Homestead", "Aventura", "North Miami", "Brickell", "Wynwood", "Little Havana", "Coconut Grove", "Key Biscayne", "Pinecrest", "Palmetto Bay"];
 
@@ -571,8 +629,10 @@ function BookingSystem() {
                   <select value={formData.time} onChange={e => updateForm("time", e.target.value)}
                     style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box", WebkitAppearance: "none", MozAppearance: "none", appearance: "none", colorScheme: "dark", cursor: "pointer", minHeight: 48 }}>
                     <option value="" style={{ background: "#1E293B" }}>Select a time...</option>
-                    {timeSlots.map(t => <option key={t} value={t} style={{ background: "#1E293B", color: "#F8FAFC" }}>{t}</option>)}
+                    {timeSlots.map(t => <option key={t.value} value={t.value} style={{ background: "#1E293B", color: "#F8FAFC" }}>{t.label}</option>)}
                   </select>
+                  {formData.time && (formData.time.startsWith("7:") && formData.time.includes("AM")) && <div style={{ marginTop: 8, padding: "8px 12px", borderRadius: 8, background: "rgba(125,211,252,0.08)", border: "1px solid rgba(125,211,252,0.15)", fontFamily: "'Outfit',sans-serif", fontSize: 12, color: "#7DD3FC" }}>Early Bird — $25 surcharge applies for service before 8 AM</div>}
+                  {formData.time && (parseInt(formData.time) >= 6 && formData.time.includes("PM") && !formData.time.startsWith("12:")) && <div style={{ marginTop: 8, padding: "8px 12px", borderRadius: 8, background: "rgba(244,114,182,0.08)", border: "1px solid rgba(244,114,182,0.15)", fontFamily: "'Outfit',sans-serif", fontSize: 12, color: "#F472B6" }}>After Hours — $25 surcharge applies for service after 6 PM</div>}
                 </div>
                 <button onClick={() => { if (formData.date && formData.time) setStep(4); else alert("Please select a date and time."); }}
                   style={{ width: "100%", padding: "15px", borderRadius: 50, border: "none", background: (formData.date && formData.time) ? PINK : GRAY, color: "#fff", fontFamily: "'Outfit',sans-serif", fontSize: 16, fontWeight: 700, cursor: "pointer", marginTop: 8 }}>
