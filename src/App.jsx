@@ -36,9 +36,9 @@ function useGooglePlaces() {
 function AddressAutocomplete({ label, value, onChange, placeholder = "Start typing your address..." }) {
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
+  const [placesReady, setPlacesReady] = useState(false);
   const placesLoaded = useGooglePlaces();
 
-  // Sync external value into the uncontrolled input
   useEffect(() => {
     if (inputRef.current && value && inputRef.current.value !== value) {
       inputRef.current.value = value;
@@ -61,21 +61,23 @@ function AddressAutocomplete({ label, value, onChange, placeholder = "Start typi
         const place = ac.getPlace();
         if (place?.formatted_address) {
           onChange(place.formatted_address);
+          if (inputRef.current) inputRef.current.value = place.formatted_address;
         }
       });
       autocompleteRef.current = ac;
+      setPlacesReady(true);
     } catch (e) {
-      // Places API failed — input remains a normal text field
+      console.warn("Places init failed:", e);
     }
   }, [placesLoaded]);
 
   return (
     <div style={{ marginBottom: 16 }}>
       <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
-      <input ref={inputRef} type="text" name="service-addr-autocomplete" placeholder={placeholder}
+      <input ref={inputRef} type="search" name={"addr" + Date.now()} data-lpignore="true" role="combobox" aria-autocomplete="list" autoCorrect="off" autoCapitalize="off" spellCheck="false" placeholder={placeholder}
         defaultValue={value}
         onChange={e => onChange(e.target.value)}
-        autoComplete="nope"
+        autoComplete="off"
         style={{
           width: "100%", padding: "13px 16px", borderRadius: 12,
           border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)",
@@ -409,10 +411,25 @@ function BookingSystem() {
 
   const updateForm = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
 
-  // Get tomorrow's date as minimum
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split("T")[0];
+  // Allow same-day booking, filter past times
+  const today = new Date();
+  const minDate = today.toISOString().split("T")[0];
+  const isToday = formData.date === minDate;
+  const nowHour = today.getHours();
+  const nowMin = today.getMinutes();
+  const getAvailableSlots = () => {
+    if (!isToday) return timeSlots;
+    return timeSlots.filter(t => {
+      const parts = t.value.match(/(\d+):(\d+)\s*(AM|PM)/);
+      if (!parts) return false;
+      let h = parseInt(parts[1]);
+      const m = parseInt(parts[2]);
+      const ampm = parts[3];
+      if (ampm === "PM" && h !== 12) h += 12;
+      if (ampm === "AM" && h === 12) h = 0;
+      return h > nowHour || (h === nowHour && m > nowMin);
+    });
+  };
 
   const handleBookingSubmit = async () => {
     setSubmitting(true);
@@ -629,7 +646,7 @@ function BookingSystem() {
                   <select value={formData.time} onChange={e => updateForm("time", e.target.value)}
                     style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box", WebkitAppearance: "none", MozAppearance: "none", appearance: "none", colorScheme: "dark", cursor: "pointer", minHeight: 48 }}>
                     <option value="" style={{ background: "#1E293B" }}>Select a time...</option>
-                    {timeSlots.map(t => <option key={t.value} value={t.value} style={{ background: "#1E293B", color: "#F8FAFC" }}>{t.label}</option>)}
+                    {getAvailableSlots().map(t => <option key={t.value} value={t.value} style={{ background: "#1E293B", color: "#F8FAFC" }}>{t.label}</option>)}
                   </select>
                   {formData.time && (formData.time.startsWith("7:") && formData.time.includes("AM")) && <div style={{ marginTop: 8, padding: "8px 12px", borderRadius: 8, background: "rgba(125,211,252,0.08)", border: "1px solid rgba(125,211,252,0.15)", fontFamily: "'Outfit',sans-serif", fontSize: 12, color: "#7DD3FC" }}>Early Bird — $25 surcharge applies for service before 8 AM</div>}
                   {formData.time && (parseInt(formData.time) >= 6 && formData.time.includes("PM") && !formData.time.startsWith("12:")) && <div style={{ marginTop: 8, padding: "8px 12px", borderRadius: 8, background: "rgba(244,114,182,0.08)", border: "1px solid rgba(244,114,182,0.15)", fontFamily: "'Outfit',sans-serif", fontSize: 12, color: "#F472B6" }}>After Hours — $25 surcharge applies for service after 6 PM</div>}
@@ -668,7 +685,7 @@ function BookingSystem() {
                 <Input label="Full Name" type="text" placeholder="Your full name" value={formData.name} onChange={e => updateForm("name", e.target.value)} />
                 <Input label="Phone" type="tel" placeholder="(305) 000-0000" value={formData.phone} onChange={e => updateForm("phone", e.target.value)} />
                 <Input label="Email" type="email" placeholder="your@email.com" value={formData.email} onChange={e => updateForm("email", e.target.value)} />
-                <AddressAutocomplete label="Service Address" value={formData.address} onChange={v => updateForm("address", v)} placeholder="Start typing your address..." />
+                <AddressAutocomplete label="Service Location" value={formData.address} onChange={v => updateForm("address", v)} placeholder="Start typing your address..." />
                 {selectedService?.name === "Mobile Detailing" && (
                   <Input label="Vehicle Info" type="text" placeholder="Year, make, model, color" value={formData.vehicle} onChange={e => updateForm("vehicle", e.target.value)} />
                 )}
