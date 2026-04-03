@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import AddressAutocomplete from "./AddressAutocomplete";
 
 const PINK = "#F472B6";
 const BLUE = "#7DD3FC";
@@ -16,99 +17,6 @@ const GOOGLE_MAPS_KEY = "AIzaSyAMDTN_tRU_MIKTh29BHZvrWRdOaYHZc98";
 const FORMSPREE_BOOKING = "https://formspree.io/f/xqeyrgno";
 const FORMSPREE_QUOTE = "https://formspree.io/f/xyknrbor";
 
-// Google Places Autocomplete loader
-function useGooglePlaces() {
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    if (!GOOGLE_MAPS_KEY || GOOGLE_MAPS_KEY === "REPLACE_ME") return;
-    if (window.google?.maps?.places) { setLoaded(true); return; }
-    if (document.querySelector('script[src*="maps.googleapis"]')) return;
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_KEY}&libraries=places`;
-    script.async = true;
-    script.onload = () => { try { if (window.google?.maps?.places) setLoaded(true); } catch(e) {} };
-    script.onerror = (e) => { console.warn("Google Maps script failed to load:", e); };
-    document.head.appendChild(script);
-  }, []);
-  return loaded;
-}
-
-function AddressAutocomplete({ label, value, onChange, placeholder = "Start typing your address..." }) {
-  const [query, setQuery] = useState(value || "");
-  const [suggestions, setSuggestions] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const serviceRef = useRef(null);
-  const wrapperRef = useRef(null);
-  const placesLoaded = useGooglePlaces();
-
-  useEffect(() => {
-    if (placesLoaded && !serviceRef.current) {
-      try { serviceRef.current = new window.google.maps.places.AutocompleteService(); } catch(e) {}
-    }
-  }, [placesLoaded]);
-
-  useEffect(() => {
-    if (value && value !== query) setQuery(value);
-  }, [value]);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => { if (wrapperRef.current && !wrapperRef.current.contains(e.target)) setShowDropdown(false); };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
-    return () => { document.removeEventListener("mousedown", handleClickOutside); document.removeEventListener("touchstart", handleClickOutside); };
-  }, []);
-
-  const handleInput = (val) => {
-    setQuery(val);
-    onChange(val);
-    if (!serviceRef.current || val.length < 3) { setSuggestions([]); setShowDropdown(false); return; }
-    serviceRef.current.getPlacePredictions({
-      input: val,
-      componentRestrictions: { country: "us" },
-      types: ["address"],
-      locationBias: { lat: 25.76, lng: -80.19, radius: 50000 },
-    }, (predictions, status) => {
-      if (status === "OK" && predictions) {
-        setSuggestions(predictions.map(p => p.description));
-        setShowDropdown(true);
-      } else {
-        setSuggestions([]);
-        setShowDropdown(false);
-      }
-    });
-  };
-
-  const selectSuggestion = (addr) => {
-    setQuery(addr);
-    onChange(addr);
-    setSuggestions([]);
-    setShowDropdown(false);
-  };
-
-  return (
-    <div ref={wrapperRef} style={{ marginBottom: 16, position: "relative" }}>
-      <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>{label}</label>
-      <input type="text" value={query} placeholder={placeholder}
-        onChange={e => handleInput(e.target.value)}
-        onFocus={e => { e.target.style.borderColor = PINK + "55"; if (suggestions.length) setShowDropdown(true); }}
-        onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.08)"; }}
-        autoComplete="one-time-code" autoCorrect="off" autoCapitalize="off" spellCheck="false" data-lpignore="true"
-        style={{ width: "100%", padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }} />
-      {showDropdown && suggestions.length > 0 && (
-        <div style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 9999, background: "#1E293B", border: "1px solid rgba(244,114,182,0.15)", borderRadius: 12, marginTop: 4, boxShadow: "0 8px 32px rgba(0,0,0,0.4)", maxHeight: 220, overflowY: "auto" }}>
-          {suggestions.map((s, i) => (
-            <div key={i} onClick={() => selectSuggestion(s)} onTouchEnd={(e) => { e.preventDefault(); selectSuggestion(s); }}
-              style={{ padding: "12px 16px", cursor: "pointer", fontFamily: "'Outfit',sans-serif", fontSize: 14, color: "#CBD5E1", borderBottom: i < suggestions.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", transition: "background 0.15s" }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(244,114,182,0.08)"}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-              {s}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 const services = [
   {
@@ -705,7 +613,10 @@ function BookingSystem() {
                 <Input label="Full Name" type="text" placeholder="Your full name" value={formData.name} onChange={e => updateForm("name", e.target.value)} />
                 <Input label="Phone" type="tel" placeholder="(305) 000-0000" value={formData.phone} onChange={e => updateForm("phone", e.target.value)} />
                 <Input label="Email" type="email" placeholder="your@email.com" value={formData.email} onChange={e => updateForm("email", e.target.value)} />
-                <AddressAutocomplete label="Service Location" value={formData.address} onChange={v => updateForm("address", v)} placeholder="Start typing your address..." />
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontFamily: "'Outfit',sans-serif", fontSize: 11, fontWeight: 600, color: GRAY, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Service Location</label>
+                  <AddressAutocomplete value={formData.address} onChange={v => updateForm("address", v)} placeholder="Start typing your address..." inputStyle={{ padding: "13px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: LIGHT, fontFamily: "'Outfit',sans-serif", fontSize: 15 }} />
+                </div>
                 {selectedService?.name === "Mobile Detailing" && (
                   <Input label="Vehicle Info" type="text" placeholder="Year, make, model, color" value={formData.vehicle} onChange={e => updateForm("vehicle", e.target.value)} />
                 )}
