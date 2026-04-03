@@ -362,7 +362,7 @@ function Hero() {
           <PhoneButton variant="outline" size="lg" />
         </div>
         <div style={{ display: "flex", gap: 40, justifyContent: "center", marginTop: 56, flexWrap: "wrap" }}>
-          {[{ val: "500+", label: "Jobs Completed" }, { val: "4.9★", label: "Average Rating" }, { val: "Same Day", label: "Service Available" }].map(s => (
+          {[{ val: "Insured", label: "Professionals" }, { val: "Guaranteed", label: "Satisfaction" }, { val: "Same Day", label: "Service Available" }].map(s => (
             <div key={s.label} style={{ textAlign: "center" }}>
               <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 28, fontWeight: 700, color: LIGHT }}>{s.val}</div>
               <div style={{ fontFamily: "'Outfit',sans-serif", fontSize: 12, color: GRAY, letterSpacing: 1, textTransform: "uppercase" }}>{s.label}</div>
