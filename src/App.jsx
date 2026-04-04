@@ -96,6 +96,78 @@ export default function HubSiteV3() {
         html, body, #root { margin: 0; padding: 0; background: #0B1120; min-height: 100vh; }
         input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
         section[id], footer[id] { scroll-margin-top: 60px; }
+
+        /* Package cards in booking form */
+        .pkg-card { transition: all 0.25s ease !important; }
+        .pkg-card:hover { 
+          border-color: rgba(125,211,252,0.5) !important;
+          box-shadow: 0 0 20px rgba(125,211,252,0.12), 0 4px 12px rgba(0,0,0,0.3);
+          transform: translateY(-2px);
+        }
+
+        /* Pricing rows */
+        .price-row { transition: all 0.25s ease !important; }
+        .price-row:hover {
+          border-color: rgba(244,114,182,0.3) !important;
+          box-shadow: 0 0 16px rgba(244,114,182,0.1);
+          transform: translateX(4px);
+          background: rgba(30,41,59,0.6) !important;
+        }
+
+        /* Service cards */
+        .svc-card { transition: all 0.3s ease !important; }
+        .svc-card:hover {
+          border-color: rgba(244,114,182,0.4) !important;
+          box-shadow: 0 0 24px rgba(244,114,182,0.12), 0 8px 20px rgba(0,0,0,0.3);
+          transform: translateY(-6px);
+        }
+        .svc-card:hover .svc-icon { transform: scale(1.2); }
+        .svc-icon { transition: transform 0.3s ease; display: inline-block; }
+        .svc-card:hover .svc-btn {
+          background: rgba(244,114,182,0.2) !important;
+          border-color: rgba(244,114,182,0.5) !important;
+        }
+
+        /* Booking tab buttons */
+        .tab-btn { transition: all 0.2s ease !important; }
+        .tab-btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+        /* CTA buttons */
+        .cta-btn { transition: all 0.3s ease !important; position: relative; overflow: hidden; }
+        .cta-btn:hover { transform: scale(1.02); box-shadow: 0 0 24px rgba(244,114,182,0.3); }
+        .cta-btn:active { transform: scale(0.98); }
+
+        /* Phone button in nav */
+        .phone-btn { transition: all 0.25s ease !important; }
+        .phone-btn:hover { box-shadow: 0 0 20px rgba(244,114,182,0.4); transform: scale(1.05); }
+
+        /* Trust stats */
+        .stat-item { transition: all 0.3s ease; }
+        .stat-item:hover { transform: scale(1.08); }
+
+        /* Service area badge */
+        .area-badge { transition: all 0.3s ease; }
+        .area-badge:hover { background: rgba(244,114,182,0.15) !important; border-color: rgba(244,114,182,0.5) !important; transform: scale(1.03); }
+
+        /* Deposit summary glow */
+        .deposit-box { transition: all 0.3s ease; }
+        .deposit-box:hover { box-shadow: 0 0 20px rgba(34,197,94,0.15); }
+
+        /* Input focus glow */
+        input:focus, textarea:focus, select:focus {
+          border-color: rgba(244,114,182,0.4) !important;
+          box-shadow: 0 0 12px rgba(244,114,182,0.1);
+        }
+
+        /* Subtle entrance animation */
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.6s ease forwards; }
+        .fade-up-d1 { animation: fadeUp 0.6s ease 0.1s forwards; opacity: 0; }
+        .fade-up-d2 { animation: fadeUp 0.6s ease 0.2s forwards; opacity: 0; }
+        .fade-up-d3 { animation: fadeUp 0.6s ease 0.3s forwards; opacity: 0; }
       `}</style>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
 
@@ -132,7 +204,7 @@ export default function HubSiteV3() {
           ))}
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <a href="tel:3055703041" style={{
+          <a href="tel:3055703041" className="phone-btn" style={{
             padding: "8px 16px", borderRadius: "20px",
             background: "linear-gradient(135deg, #F472B6, #E04DA0)",
             color: "#fff", fontSize: "12px", fontWeight: 600, textDecoration: "none",
@@ -143,7 +215,7 @@ export default function HubSiteV3() {
 
       {/* ========== SECTION 1: HERO ========== */}
       <section style={{ padding: "55px 20px 45px", textAlign: "center", background: "linear-gradient(180deg, #0B1120 0%, #131B2E 100%)" }}>
-        <div style={{
+        <div className="area-badge" style={{
           display: "inline-block", padding: "6px 20px", borderRadius: "20px",
           border: "1px solid rgba(244,114,182,0.3)", background: "rgba(244,114,182,0.08)",
           fontSize: "11px", color: "#F472B6", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "20px",
@@ -164,7 +236,7 @@ export default function HubSiteV3() {
 
         <div style={{ display: "flex", justifyContent: "center", gap: "36px" }}>
           {[{ big: "Insured", sub: "PROFESSIONALS" }, { big: "Guaranteed", sub: "SATISFACTION" }, { big: "Same Day", sub: "SERVICE AVAILABLE" }].map((s, i) => (
-            <div key={i} style={{ textAlign: "center" }}>
+            <div key={i} className="stat-item" style={{ textAlign: "center" }}>
               <div style={{ fontSize: "18px", fontWeight: 700 }}>{s.big}</div>
               <div style={{ fontSize: "9px", color: "#94A3B8", letterSpacing: "1px", marginTop: "2px" }}>{s.sub}</div>
             </div>
@@ -187,7 +259,7 @@ export default function HubSiteV3() {
               { id: "quote", label: "Get a Quote" },
               { id: "call", label: "Call Now" },
             ].map(tab => (
-              <button key={tab.id} onClick={() => setBookingTab(tab.id)}
+              <button key={tab.id} className="tab-btn" onClick={() => setBookingTab(tab.id)}
                 style={{
                   flex: 1, padding: "10px", borderRadius: "10px", border: "none",
                   background: bookingTab === tab.id ? "linear-gradient(135deg, #F472B6, #7DD3FC)" : "transparent",
@@ -223,7 +295,7 @@ export default function HubSiteV3() {
               {/* Package Selector with Deposit */}
               <label style={labelStyle}>Select Package</label>
               {currentPkgs.map((pkg, i) => (
-                <button key={i} onClick={() => setSelectedPkg(i)}
+                <button key={i} className="pkg-card" onClick={() => setSelectedPkg(i)}
                   style={{
                     width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
                     padding: "14px", marginBottom: "8px", borderRadius: "12px",
@@ -291,7 +363,7 @@ export default function HubSiteV3() {
                   background: "linear-gradient(135deg, rgba(34,197,94,0.08), rgba(125,211,252,0.08))",
                   border: "1px solid rgba(34,197,94,0.2)",
                   display: "flex", justifyContent: "space-between", alignItems: "center",
-                }}>
+                }} className="deposit-box">
                   <div>
                     <div style={{ fontSize: "12px", color: "#94A3B8" }}>Deposit to confirm booking</div>
                     <div style={{ fontSize: "11px", color: "#94A3B8", marginTop: "2px" }}>Remaining balance due after service</div>
@@ -306,7 +378,7 @@ export default function HubSiteV3() {
                 color: selectedPackage ? "#0B1120" : "#94A3B8",
                 fontSize: "15px", fontWeight: 700, cursor: selectedPackage ? "pointer" : "default",
                 fontFamily: "inherit", opacity: selectedPackage ? 1 : 0.5,
-              }}>
+              }} className="cta-btn">
                 {selectedPackage ? `Confirm Booking — $${depositAmount} Deposit` : "Select a package to continue"}
               </button>
 
@@ -342,7 +414,7 @@ export default function HubSiteV3() {
                 width: "100%", padding: "15px", borderRadius: "12px", border: "none",
                 background: "linear-gradient(135deg, #F472B6, #7DD3FC)",
                 color: "#0B1120", fontSize: "15px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
-              }}>Get My Free Quote</button>
+              }} className="cta-btn">Get My Free Quote</button>
             </div>
           )}
 
@@ -392,7 +464,7 @@ export default function HubSiteV3() {
           </div>
 
           {SERVICE_DATA[activePriceTab].packages.map((pkg, i) => (
-            <div key={i} style={{
+            <div key={i} className="price-row" style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
               padding: "16px", marginBottom: "8px", borderRadius: "12px",
               background: "rgba(30,41,59,0.4)", border: "1px solid rgba(148,163,184,0.08)",
@@ -421,12 +493,12 @@ export default function HubSiteV3() {
         </h2>
         <div style={{ display: "flex", gap: "12px", maxWidth: "600px", margin: "0 auto", flexWrap: "wrap", justifyContent: "center" }}>
           {CROSS_LINKS.map((s, i) => (
-            <a key={i} href={`https://${s.link}`} target="_blank" rel="noopener noreferrer" style={{
+            <a key={i} href={`https://${s.link}`} target="_blank" rel="noopener noreferrer" className="svc-card" style={{
               flex: "1 1 170px", padding: "24px 16px", borderRadius: "16px", textAlign: "center",
               background: "rgba(30,41,59,0.4)", border: "1px solid rgba(148,163,184,0.1)", cursor: "pointer",
               textDecoration: "none", color: "#F8FAFC", transition: "all 0.2s",
             }}>
-              <div style={{ fontSize: "36px", marginBottom: "12px" }}>{s.icon}</div>
+              <div className="svc-icon" style={{ fontSize: "36px", marginBottom: "12px" }}>{s.icon}</div>
               <div style={{ fontSize: "16px", fontWeight: 600, marginBottom: "6px" }}>{s.name}</div>
               <div style={{ fontSize: "12px", color: "#94A3B8", lineHeight: 1.4, marginBottom: "14px" }}>
                 {s.name === "Junk Removal" ? "Furniture, debris, full cleanouts" : s.name === "Pressure Washing" ? "Driveways, exteriors, roofs, decks" : "Interior, exterior, ceramic coating"}
@@ -435,7 +507,7 @@ export default function HubSiteV3() {
                 padding: "8px 16px", borderRadius: "8px",
                 background: "rgba(244,114,182,0.1)", border: "1px solid rgba(244,114,182,0.2)",
                 fontSize: "11px", color: "#F472B6", fontWeight: 600,
-              }}>View Details →</div>
+              }} className="svc-btn">View Details →</div>
             </a>
           ))}
         </div>
