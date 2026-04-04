@@ -92,8 +92,10 @@ export default function HubSiteV3() {
     <div style={{ minHeight: "100vh", background: "#0B1120", color: "#F8FAFC", fontFamily: "'Outfit', sans-serif", overflowX: "hidden", margin: 0, padding: 0 }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         html, body, #root { margin: 0; padding: 0; background: #0B1120; min-height: 100vh; }
         input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
+        section[id], footer[id] { scroll-margin-top: 60px; }
       `}</style>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
 
@@ -117,8 +119,16 @@ export default function HubSiteV3() {
           </div>
         </div>
         <div style={{ display: "flex", gap: "24px", fontSize: "13px", fontWeight: 500 }}>
-          {["SERVICES", "BOOK NOW", "AREAS", "ABOUT"].map(l => (
-            <span key={l} style={{ color: "#94A3B8", cursor: "pointer", letterSpacing: "0.5px" }}>{l}</span>
+          {[
+            { label: "SERVICES", target: "services" },
+            { label: "BOOK NOW", target: "booking" },
+            { label: "AREAS", target: "areas" },
+            { label: "ABOUT", target: "footer" },
+          ].map(l => (
+            <span key={l.label} onClick={() => document.getElementById(l.target)?.scrollIntoView({ behavior: "smooth" })} style={{ color: "#94A3B8", cursor: "pointer", letterSpacing: "0.5px", transition: "color 0.2s" }}
+              onMouseEnter={e => e.target.style.color = "#F472B6"}
+              onMouseLeave={e => e.target.style.color = "#94A3B8"}
+            >{l.label}</span>
           ))}
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -163,7 +173,7 @@ export default function HubSiteV3() {
       </section>
 
       {/* ========== SECTION 2: BOOKING (with deposits) ========== */}
-      <section style={{ padding: "40px 16px 50px", background: "linear-gradient(180deg, #131B2E 0%, #0B1120 100%)" }}>
+      <section id="booking" style={{ padding: "40px 16px 50px", background: "linear-gradient(180deg, #131B2E 0%, #0B1120 100%)" }}>
         <div style={{ maxWidth: "560px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "24px" }}>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "26px", fontWeight: 700, margin: "0 0 6px" }}>Book Your Service</h2>
@@ -405,7 +415,7 @@ export default function HubSiteV3() {
       </section>
 
       {/* ========== SECTION 4: SERVICES ========== */}
-      <section style={{ padding: "50px 16px", background: "linear-gradient(180deg, #131B2E 0%, #0B1120 100%)" }}>
+      <section id="services" style={{ padding: "50px 16px", background: "linear-gradient(180deg, #131B2E 0%, #0B1120 100%)" }}>
         <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "26px", textAlign: "center", marginBottom: "24px" }}>
           Our <span style={{ color: "#F472B6" }}>Services</span>
         </h2>
@@ -432,7 +442,7 @@ export default function HubSiteV3() {
       </section>
 
       {/* ========== SECTION 5: AREAS ========== */}
-      <section style={{ padding: "50px 16px", background: "linear-gradient(180deg, #0B1120 0%, #131B2E 100%)" }}>
+      <section id="areas" style={{ padding: "50px 16px", background: "linear-gradient(180deg, #0B1120 0%, #131B2E 100%)" }}>
         <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "26px", textAlign: "center", marginBottom: "24px" }}>
           Areas We <span style={{ color: "#7DD3FC" }}>Serve</span>
         </h2>
@@ -453,7 +463,7 @@ export default function HubSiteV3() {
       </section>
 
       {/* ========== FOOTER ========== */}
-      <footer style={{ padding: "30px 16px", textAlign: "center", borderTop: "1px solid rgba(148,163,184,0.1)", background: "#0B1120" }}>
+      <footer id="footer" style={{ padding: "30px 16px", textAlign: "center", borderTop: "1px solid rgba(148,163,184,0.1)", background: "#0B1120" }}>
         <div style={{
           fontFamily: "'Playfair Display', serif", fontSize: "18px", fontWeight: 700,
           background: "linear-gradient(135deg, #F472B6, #7DD3FC)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
