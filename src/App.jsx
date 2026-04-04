@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /*
   MAGIC CITY SERVICES — HUB SITE v3
@@ -78,8 +78,23 @@ export default function HubSiteV3() {
   const selectedPackage = selectedPkg !== null ? currentPkgs[selectedPkg] : null;
   const depositAmount = selectedPackage ? selectedPackage.deposit : 0;
 
+  // Kill white body/html background on mobile Safari
+  useEffect(() => {
+    document.documentElement.style.background = "#0B1120";
+    document.body.style.background = "#0B1120";
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
+    document.documentElement.style.margin = "0";
+    document.documentElement.style.padding = "0";
+  }, []);
+
   return (
-    <div style={{ minHeight: "100vh", background: "#0B1120", color: "#F8FAFC", fontFamily: "'Outfit', sans-serif", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", background: "#0B1120", color: "#F8FAFC", fontFamily: "'Outfit', sans-serif", overflowX: "hidden", margin: 0, padding: 0 }}>
+      <style>{`
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body, #root { margin: 0; padding: 0; background: #0B1120; min-height: 100vh; }
+        input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
+      `}</style>
       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
 
       {/* ========== NAV ========== */}
