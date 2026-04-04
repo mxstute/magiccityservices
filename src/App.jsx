@@ -96,6 +96,16 @@ export default function HubSiteV3() {
         html, body, #root { margin: 0; padding: 0; background: #0B1120; min-height: 100vh; }
         input, textarea, select, button { max-width: 100%; box-sizing: border-box; }
         section[id], footer[id] { scroll-margin-top: 60px; }
+        /* Mobile nav fix */
+        .nav-links { display: flex; gap: 20px; }
+        @media (max-width: 640px) {
+          .nav-links { display: none !important; }
+          nav { grid-template-columns: 1fr auto !important; padding: 12px 16px !important; }
+          .nav-logo-text { font-size: 14px !important; }
+          .nav-sub-text { font-size: 9px !important; letter-spacing: 2px !important; }
+          .phone-btn { padding: 8px 12px !important; font-size: 11px !important; }
+        }
+
 
         /* Package cards in booking form */
         .pkg-card { transition: all 0.25s ease !important; }
@@ -186,11 +196,11 @@ export default function HubSiteV3() {
             </div>
           </div>
           <div>
-            <div style={{ fontSize: "14px", fontWeight: 700, letterSpacing: "0.5px" }}>MAGIC CITY</div>
-            <div style={{ fontSize: "8px", color: "#94A3B8", letterSpacing: "3px" }}>SERVICES</div>
+            <div style={{ fontSize: "14px", fontWeight: 700, letterSpacing: "0.5px" }} className="nav-logo-text">MAGIC CITY</div>
+            <div style={{ fontSize: "8px", color: "#94A3B8", letterSpacing: "3px" }} className="nav-sub-text">SERVICES</div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: "24px", fontSize: "13px", fontWeight: 500 }}>
+        <div className="nav-links" style={{ display: "flex", gap: "24px", fontSize: "13px", fontWeight: 500 }}>
           {[
             { label: "SERVICES", target: "services" },
             { label: "BOOK NOW", target: "booking" },
