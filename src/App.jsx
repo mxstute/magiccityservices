@@ -351,7 +351,18 @@ export default function HubSiteV3() {
                   <select value={bookingTime} onChange={e => setBookingTime(e.target.value)}
                     style={{ ...inputStyle, height: "46px", WebkitAppearance: "none", lineHeight: "24px", padding: "10px 12px", backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394A3B8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center" }}>
                     <option value="">Select time</option>
-                    {TIMES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                    {TIMES.filter(t => {
+                      if (!bookingDate) return true;
+                      const today = new Date().toISOString().split("T")[0];
+                      if (bookingDate !== today) return true;
+                      const now = new Date();
+                      const [timePart, ampm] = t.value.split(" ");
+                      const [hr, min] = timePart.split(":").map(Number);
+                      let h24 = hr;
+                      if (ampm === "PM" && hr !== 12) h24 = hr + 12;
+                      if (ampm === "AM" && hr === 12) h24 = 0;
+                      return h24 > now.getHours() || (h24 === now.getHours() && min > now.getMinutes());
+                    }).map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                   </select>
                 </div>
               </div>
