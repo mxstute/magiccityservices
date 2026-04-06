@@ -78,6 +78,64 @@ export default function HubSiteV3() {
   const selectedPackage = selectedPkg !== null ? currentPkgs[selectedPkg] : null;
   const depositAmount = selectedPackage ? selectedPackage.deposit : 0;
 
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleBookingSubmit = async () => {
+    if (!selectedPackage || !name || !phone || !email || !address || !bookingDate || !bookingTime) {
+      alert("Please fill in all fields before submitting.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const res = await fetch("https://formspree.io/f/xqeyrgno", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          address,
+          date: bookingDate,
+          time: bookingTime,
+          service: typeof selectedService === "string" ? selectedService : "N/A",
+          package: selectedPackage.name,
+          price: selectedPackage.price,
+          deposit: "$" + depositAmount,
+        }),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        alert("Something went wrong. Please call us at (305) 570-3041 to complete your booking.");
+      }
+    } catch (e) {
+      alert("Something went wrong. Please call us at (305) 570-3041 to complete your booking.");
+    }
+    setSubmitting(false);
+  };
+
+  const handleQuoteSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    try {
+      const res = await fetch("https://formspree.io/f/xyknrbor", {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        alert("Quote request sent! We'll get back to you within 1 hour during business hours.");
+        form.reset();
+      } else {
+        alert("Something went wrong. Please call us at (305) 570-3041.");
+      }
+    } catch (err) {
+      alert("Something went wrong. Please call us at (305) 570-3041.");
+    }
+  };
+
   // Kill white body/html background on mobile Safari
   useEffect(() => {
     document.documentElement.style.background = "#0B1120";
@@ -375,7 +433,7 @@ export default function HubSiteV3() {
               <label style={labelStyle}>Email</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" style={{ ...inputStyle, marginBottom: "10px" }} />
               <label style={labelStyle}>Service Address</label>
-              <input type="text" value={address} onChange={e => setAddress(e.target.value)} placeholder="Enter service address" style={{ ...inputStyle, marginBottom: "20px" }} />
+              <input type="text" value={address} onChange={e => setAddress(e.target.value)} placeholder="Street, City, State, Zip Code" style={{ ...inputStyle, marginBottom: "20px" }} />
 
               {/* Deposit Summary + CTA */}
               {selectedPackage && (
@@ -399,20 +457,28 @@ export default function HubSiteV3() {
                 color: selectedPackage ? "#0B1120" : "#94A3B8",
                 fontSize: "15px", fontWeight: 700, cursor: selectedPackage ? "pointer" : "default",
                 fontFamily: "inherit", opacity: selectedPackage ? 1 : 0.5,
-              }} className="cta-btn">
-                {selectedPackage ? `Confirm Booking — $${depositAmount} Deposit` : "Select a package to continue"}
+              }} className="cta-btn" onClick={handleBookingSubmit} disabled={submitting || submitted || !selectedPackage}>
+                {submitting ? "Submitting..." : submitted ? "Booking Submitted! ✅" : selectedPackage ? `Confirm Booking — $${depositAmount} Deposit` : "Select a package to continue"}
               </button>
 
+              {submitted && (
+                <div style={{ textAlign: "center", padding: "14px", marginTop: "12px", borderRadius: "12px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)" }}>
+                  <div style={{ fontSize: "14px", fontWeight: 600, color: "#22C55E", marginBottom: "4px" }}>Booking received! 🎉</div>
+                  <div style={{ fontSize: "12px", color: "#94A3B8" }}>Check your email for confirmation. A team member will reach out within 30 minutes.</div>
+                </div>
+              )}
+              {!submitted && (
               <p style={{ textAlign: "center", fontSize: "11px", color: "#94A3B8", marginTop: "10px", lineHeight: 1.4 }}>
                 Deposit secures your time slot. Remaining balance due after service is completed to your satisfaction.
                 <br />Final price confirmed after on-site estimate.
               </p>
+              )}
             </div>
           )}
 
           {/* ---- GET A QUOTE TAB (free, no deposit) ---- */}
           {bookingTab === "quote" && (
-            <div style={{ padding: "24px 20px", borderRadius: "16px", background: "rgba(30,41,59,0.3)", border: "1px solid rgba(148,163,184,0.1)" }}>
+            <form style={{ padding: "24px 20px", borderRadius: "16px", background: "rgba(30,41,59,0.3)", border: "1px solid rgba(148,163,184,0.1)" }}>
               <div style={{
                 padding: "10px 14px", borderRadius: "10px", marginBottom: "16px",
                 background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.15)",
@@ -424,11 +490,11 @@ export default function HubSiteV3() {
                 <option>Junk Removal</option><option>Pressure Washing</option><option>Mobile Detailing</option>
               </select>
               <label style={labelStyle}>Full Name</label>
-              <input type="text" placeholder="Your full name" style={{ ...inputStyle, marginBottom: "10px" }} />
+              <input type="text" placeholder="Your full name" name="name" style={{ ...inputStyle, marginBottom: "10px" }} />
               <label style={labelStyle}>Phone</label>
-              <input type="tel" placeholder="(305) 000-0000" style={{ ...inputStyle, marginBottom: "10px" }} />
+              <input type="tel" placeholder="(305) 000-0000" name="phone" style={{ ...inputStyle, marginBottom: "10px" }} />
               <label style={labelStyle}>Email</label>
-              <input type="email" placeholder="your@email.com" style={{ ...inputStyle, marginBottom: "10px" }} />
+              <input type="email" placeholder="your@email.com" name="email" style={{ ...inputStyle, marginBottom: "10px" }} />
               <label style={labelStyle}>Describe what you need</label>
               <textarea placeholder="Tell us about the job — what needs to be done, property type, any special access instructions..." rows={3} style={{ ...inputStyle, resize: "vertical", lineHeight: 1.5, marginBottom: "16px" }} />
               <button style={{
@@ -436,7 +502,7 @@ export default function HubSiteV3() {
                 background: "linear-gradient(135deg, #F472B6, #7DD3FC)",
                 color: "#0B1120", fontSize: "15px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
               }} className="cta-btn">Get My Free Quote</button>
-            </div>
+            </form>
           )}
 
           {/* ---- CALL NOW TAB ---- */}
