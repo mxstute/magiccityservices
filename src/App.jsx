@@ -82,6 +82,29 @@ export default function HubSiteV3() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  // Handle Stripe redirect back
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("booking") === "success") {
+      // Submit to Formspree with saved data
+      const saved = localStorage.getItem("pendingBooking");
+      if (saved) {
+        const data = JSON.parse(saved);
+        fetch("https://formspree.io/f/xqeyrgno", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...data, deposit: "$" + data.deposit, payment: "Stripe deposit paid" }),
+        }).catch(() => {});
+        localStorage.removeItem("pendingBooking");
+      }
+      setSubmitted(true);
+      // Fire Google Ads conversion
+      if (typeof gtag === "function") gtag("event", "conversion", {"send_to": "AW-18078412608/S_40CIGMrZkcEMDeuqxD"});
+      // Clean URL
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
   const handleBookingSubmit = async () => {
     if (!selectedPackage || !name || !phone || !email || !address || !bookingDate || !bookingTime) {
       alert("Please fill in all fields before submitting.");
@@ -89,32 +112,43 @@ export default function HubSiteV3() {
     }
     setSubmitting(true);
     try {
-      const res = await fetch("https://formspree.io/f/xqeyrgno", {
+      // Save form data to localStorage before Stripe redirect
+      const bookingData = {
+        name, phone, email, address,
+        date: bookingDate, time: bookingTime,
+        service: typeof selectedService === "string" ? selectedService : "N/A",
+        package: selectedPackage.name,
+        price: selectedPackage.price,
+        deposit: depositAmount,
+      };
+      localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
+
+      // Create Stripe Checkout session
+      const res = await fetch("/api/create-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          phone,
-          email,
-          address,
+          packageName: selectedPackage.name,
+          price: depositAmount,
+          customerName: name,
+          customerEmail: email,
+          customerPhone: phone,
           date: bookingDate,
           time: bookingTime,
-          service: typeof selectedService === "string" ? selectedService : "N/A",
-          package: selectedPackage.name,
-          price: selectedPackage.price,
-          deposit: "$" + depositAmount,
+          address,
         }),
       });
-      if (res.ok) {
-        setSubmitted(true);
-        if (typeof gtag === "function") gtag("event", "conversion", {"send_to": "AW-18078412608/S_40CIGMrZkcEMDeuqxD"});
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
       } else {
-        alert("Something went wrong. Please call us at (305) 570-3041 to complete your booking.");
+        throw new Error(data.error || "Failed to create checkout session");
       }
     } catch (e) {
-      alert("Something went wrong. Please call us at (305) 570-3041 to complete your booking.");
+      console.error("Checkout error:", e);
+      alert("Something went wrong creating your checkout. Please try again or call us.");
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const handleQuoteSubmit = async (e) => {

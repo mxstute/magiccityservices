@@ -32,8 +32,8 @@ export default async function handler(req, res) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `Magic City Detailing — ${packageName}`,
-              description: `Deposit for ${packageName}. Vehicle: ${vehicleInfo || 'TBD'}. Date: ${date || 'TBD'} at ${time || 'TBD'}.`,
+              name: `Magic City Services — ${packageName}`,
+              description: `Deposit for ${packageName}. Date: ${date || 'TBD'} at ${time || 'TBD'}.`,
             },
             unit_amount: amountInCents,
           },
