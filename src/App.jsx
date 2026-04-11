@@ -107,7 +107,7 @@ export default function HubSiteV3() {
       });
       if (res.ok) {
         setSubmitted(true);
-        if (typeof gtag === "function") gtag("event", "conversion", {"send_to": "AW-10078412688/bkL_CMByspkEMPDeuqD3"});
+        if (typeof gtag === "function") gtag("event", "conversion", {"send_to": "AW-18078412608/S_40CIGMrZkcEMDeuqxD"});
       } else {
         alert("Something went wrong. Please call us at (305) 570-3041 to complete your booking.");
       }
