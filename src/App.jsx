@@ -4,7 +4,7 @@ import AddressAutocomplete from "./AddressAutocomplete";
 /*
   MAGIC CITY SERVICES — HUB SITE v3
   Layout: Hero → Booking (section 2) → Pricing → Services → Areas → Footer
-  Deposit model: $25 / $50 / $75 based on package tier
+  Deposit model: 25% under $400, 50% over $400
   Call is always free — deposits for online bookings only
 */
 
@@ -12,25 +12,25 @@ const SERVICE_DATA = {
   "Junk Removal": {
     icon: "🚛",
     packages: [
-      { name: "Half Truck Load", price: "$299", deposit: 25, note: "Furniture, small cleanouts", tag: null },
-      { name: "Full Truck Load", price: "$549", deposit: 50, note: "Garage, storage, large hauls", tag: "Most Popular" },
-      { name: "Complete Cleanout", price: "$849+", deposit: 75, note: "Entire property cleanout", tag: null },
+      { name: "Half Truck Load", price: "$299", deposit: 75, note: "Furniture, small cleanouts", tag: null },
+      { name: "Full Truck Load", price: "$549", deposit: 275, note: "Garage, storage, large hauls", tag: "Most Popular" },
+      { name: "Complete Cleanout", price: "$849+", deposit: 425, note: "Entire property cleanout", tag: null },
     ],
   },
   "Pressure Washing": {
     icon: "🏠",
     packages: [
-      { name: "Driveway / Sidewalk", price: "$199", deposit: 25, note: "Standard residential driveway", tag: null },
-      { name: "House Exterior", price: "$299+", deposit: 50, note: "Single or two-story", tag: "Most Popular" },
-      { name: "Full Property Package", price: "$999+", deposit: 75, note: "Driveway + house + roof + deck", tag: "Best Value" },
+      { name: "Driveway / Sidewalk", price: "$199", deposit: 50, note: "Standard residential driveway", tag: null },
+      { name: "House Exterior", price: "$299+", deposit: 75, note: "Single or two-story", tag: "Most Popular" },
+      { name: "Full Property Package", price: "$999+", deposit: 500, note: "Driveway + house + roof + deck", tag: "Best Value" },
     ],
   },
   "Mobile Detailing": {
     icon: "🚗",
     packages: [
-      { name: "Interior Detail", price: "$249", deposit: 25, note: "Deep clean, condition, protect", tag: null },
-      { name: "Full Detail", price: "$349", deposit: 50, note: "Interior + exterior", tag: "Most Popular" },
-      { name: "Showroom Elite", price: "$599", deposit: 75, note: "The works — premium package", tag: null },
+      { name: "Interior Detail", price: "$249", deposit: 65, note: "Deep clean, condition, protect", tag: null },
+      { name: "Full Detail", price: "$349", deposit: 90, note: "Interior + exterior", tag: "Most Popular" },
+      { name: "Showroom Elite", price: "$599", deposit: 300, note: "The works — premium package", tag: null },
     ],
   },
 };
