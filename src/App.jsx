@@ -28,9 +28,9 @@ const SERVICE_DATA = {
   "Mobile Detailing": {
     icon: "🚗",
     packages: [
-      { name: "Interior Detail", price: "$199", deposit: 25, note: "Deep clean, condition, protect", tag: null },
-      { name: "Full Detail", price: "$299", deposit: 50, note: "Interior + exterior", tag: "Most Popular" },
-      { name: "Showroom Elite", price: "$499", deposit: 75, note: "The works — premium package", tag: null },
+      { name: "Interior Detail", price: "$249", deposit: 25, note: "Deep clean, condition, protect", tag: null },
+      { name: "Full Detail", price: "$349", deposit: 50, note: "Interior + exterior", tag: "Most Popular" },
+      { name: "Showroom Elite", price: "$599", deposit: 75, note: "The works — premium package", tag: null },
     ],
   },
 };
