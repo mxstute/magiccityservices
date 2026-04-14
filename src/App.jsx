@@ -12,16 +12,16 @@ const SERVICE_DATA = {
   "Junk Removal": {
     icon: "🚛",
     packages: [
-      { name: "Half Truck Load", price: "$299", deposit: 75, note: "Furniture, small cleanouts", tag: null },
-      { name: "Full Truck Load", price: "$549", deposit: 275, note: "Garage, storage, large hauls", tag: "Most Popular" },
-      { name: "Complete Cleanout", price: "$849+", deposit: 425, note: "Entire property cleanout", tag: null },
+      { name: "Half Truck Load", price: "$400", deposit: 75, note: "Furniture, small cleanouts", tag: null },
+      { name: "Full Truck Load", price: "$750", deposit: 275, note: "Garage, storage, large hauls", tag: "Most Popular" },
+      { name: "Complete Cleanout", price: "$1,000+", deposit: 425, note: "Entire property cleanout", tag: null },
     ],
   },
   "Pressure Washing": {
     icon: "🏠",
     packages: [
-      { name: "Driveway / Sidewalk", price: "$199", deposit: 50, note: "Standard residential driveway", tag: null },
-      { name: "House Exterior", price: "$299+", deposit: 75, note: "Single or two-story", tag: "Most Popular" },
+      { name: "Driveway / Sidewalk", price: "$250", deposit: 50, note: "Standard residential driveway", tag: null },
+      { name: "House Exterior", price: "$350+", deposit: 75, note: "Single or two-story", tag: "Most Popular" },
       { name: "Full Property Package", price: "$999+", deposit: 500, note: "Driveway + house + roof + deck", tag: "Best Value" },
     ],
   },
