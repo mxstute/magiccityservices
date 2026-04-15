@@ -55,6 +55,152 @@ for (let h = 7; h <= 21; h++) {
   }
 }
 
+const SERVICE_IMAGES = {
+  "Junk Removal": "/images/junkremoval-hero.png",
+  "Pressure Washing": "/images/pressurewashing-hero.png",
+  "Mobile Detailing": "/images/detailing-hero.png",
+};
+
+const HUB_PACKAGE_SPECS = {
+  "Half Truck Load": {
+    time: "30-60 minutes on-site",
+    capacity: "~1-5 large items",
+    items: [
+      "Professional crew with commercial truck and equipment",
+      "Loading and hauling of all items (you point, we carry)",
+      "Furniture, mattresses, box springs, small appliances",
+      "Boxes, bags, and loose household items",
+      "Yard waste and debris",
+      "Sweep of area after removal",
+      "Responsible disposal: recycling, donation, and landfill",
+      "All labor, loading, transport, and dump fees included",
+    ],
+  },
+  "Full Truck Load": {
+    time: "1-2 hours on-site",
+    capacity: "~6-15 large items (full truck bed)",
+    tierUp: "Everything in Half Truck, PLUS:",
+    items: [
+      "Full truck bed capacity (~8 cubic yards)",
+      "Multiple rooms or areas in one trip",
+      "Large appliances (refrigerators, washers, dryers, stoves)",
+      "Exercise equipment, outdoor items, electronics",
+      "Construction-light debris (drywall, wood, tile, flooring)",
+      "Full sweep and cleanup of all removal areas",
+      "All labor, loading, transport, and dump fees included",
+    ],
+  },
+  "Complete Cleanout": {
+    time: "2-5 hours on-site",
+    capacity: "Entire property",
+    tierUp: "Everything in Full Truck, PLUS:",
+    items: [
+      "Multiple truck loads as needed (no per-load upcharge within scope)",
+      "Whole-home or whole-property cleanouts",
+      "Hoarder and heavy-volume situations",
+      "Attic, basement, storage unit, shed clearouts",
+      "Foreclosure, eviction, and estate cleanups",
+      "Commercial space clearing",
+      "Sorting for donation when possible",
+      "Broom-clean finish of all cleared areas",
+      "All labor, loading, transport, and dump fees included",
+    ],
+  },
+  "Driveway / Sidewalk": {
+    time: "1-2 hours",
+    items: [
+      "Full surface pressure wash (up to 4,500 PSI commercial-grade)",
+      "Pre-treatment with degreaser for oil and grease stains",
+      "Edge-to-edge cleaning (driveway, walkways, connected sidewalks)",
+      "Weed and debris removal from joints and cracks",
+      "Mold, mildew, and algae treatment",
+      "Rinse and drainage management",
+      "Final walk-through inspection",
+    ],
+  },
+  "House Exterior": {
+    time: "2-5 hours (varies by story)",
+    items: [
+      "Full soft wash of all exterior walls",
+      "Mold, mildew, algae, and dirt buildup removal",
+      "Eave, soffit, and fascia board cleaning",
+      "Exterior window frame rinse",
+      "Front porch, entryway, and garage door wash",
+      "Foundation base rinse",
+      "Landscaping protection (pre-soak plants, cover sensitive areas)",
+      "2-story includes extended-reach equipment and upper-level access",
+      "Final walk-through inspection",
+    ],
+  },
+  "Full Property Package": {
+    time: "5-8 hours (may require full day)",
+    items: [
+      "Driveway and sidewalk pressure wash",
+      "Full house exterior soft wash (1 or 2 story)",
+      "Pool deck / patio cleaning",
+      "Roof soft wash",
+      "Fence / wall cleaning (if applicable)",
+      "Walkways, pathways, and entryway cleaning",
+      "Garage floor rinse",
+      "Full property walk-through and final inspection",
+      "Best value \u2014 saves $200-$400+ vs. booking individually",
+    ],
+  },
+  "Interior Detail": {
+    time: "1-2 hours",
+    items: [
+      "Full interior vacuum (seats, carpets, floor mats, trunk, crevices)",
+      "Floor mat removal, cleaning, and reinstallation",
+      "Dashboard, console, and door panel wipe-down and dressing",
+      "Air vent cleaning and dust removal",
+      "Steering wheel, gear shift, and control surface cleaning",
+      "Cup holder and storage compartment cleanout",
+      "Interior window and mirror cleaning (streak-free)",
+      "Leather/vinyl conditioning",
+      "Fabric seats: spot treatment and light shampoo",
+      "Door jamb and seat belt wipe-down",
+      "UV protectant application",
+      "Air freshener application",
+    ],
+  },
+  "Full Detail": {
+    time: "2-4 hours",
+    tierUp: "Everything in Interior Detail, PLUS:",
+    items: [
+      "Full hand wash (two-bucket method, pH-neutral soap)",
+      "Wheel and tire cleaning (brake dust removal)",
+      "Tire dressing and shine application",
+      "Wheel well cleaning",
+      "Bug and tar removal",
+      "Clay bar light pass (contamination removal)",
+      "Hand-dry with microfiber towels (scratch-free)",
+      "Spray wax / sealant (3-4 week protection)",
+      "Exterior window and mirror cleaning",
+      "Exterior trim dressing and chrome polishing",
+      "Exhaust tip cleaning",
+      "Final walk-around inspection",
+    ],
+  },
+  "Showroom Elite": {
+    time: "3-6 hours",
+    tierUp: "Everything in Full Detail, PLUS:",
+    items: [
+      "Deep carpet and upholstery extraction (hot water shampoo/steam)",
+      "Leather deep clean and conditioner (multi-step)",
+      "Headliner spot cleaning",
+      "Full clay bar treatment (all painted surfaces)",
+      "One-step machine polish (swirl marks, minor scratches, oxidation)",
+      "Premium paint sealant (60-90 day protection)",
+      "Engine bay surface wipe-down",
+      "Weather seal conditioning",
+      "Plastic trim restoration",
+      "Glass water spot treatment",
+      "Detailed wheel face polish",
+      "Final hand buff and inspection under direct light",
+    ],
+  },
+};
+
 const CROSS_LINKS = [
   { name: "Junk Removal", icon: "🚛", link: "magiccityjunkremovalmiami.com" },
   { name: "Pressure Washing", icon: "🏠", link: "magiccitypressurewashingmiami.com" },
@@ -73,6 +219,7 @@ export default function HubSiteV3() {
   const [address, setAddress] = useState("");
   const [activePriceTab, setActivePriceTab] = useState("Junk Removal");
   const [hoveredArea, setHoveredArea] = useState(null);
+  const [expandedSpec, setExpandedSpec] = useState(null);
 
   const serviceKeys = Object.keys(SERVICE_DATA);
   const currentPkgs = SERVICE_DATA[selectedService].packages;
@@ -565,7 +712,7 @@ export default function HubSiteV3() {
       </section>
 
       {/* ========== SECTION 3: PRICING ========== */}
-      <section style={{ padding: "50px 16px", background: "linear-gradient(180deg, #0B1120 0%, #131B2E 100%)" }}>
+      <section id="pricing" style={{ padding: "50px 16px", background: "linear-gradient(180deg, #0B1120 0%, #131B2E 100%)" }}>
         <div style={{ maxWidth: "600px", margin: "0 auto" }}>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "26px", textAlign: "center", marginBottom: "6px" }}>
             Transparent <span style={{ color: "#7DD3FC" }}>Pricing</span>
@@ -574,7 +721,7 @@ export default function HubSiteV3() {
 
           <div style={{ display: "flex", gap: "4px", marginBottom: "16px", background: "rgba(30,41,59,0.5)", borderRadius: "12px", padding: "4px" }}>
             {serviceKeys.map(key => (
-              <button key={key} onClick={() => setActivePriceTab(key)}
+              <button key={key} onClick={() => { setActivePriceTab(key); setExpandedSpec(null); }}
                 style={{
                   flex: 1, padding: "8px", borderRadius: "10px", border: "none",
                   background: activePriceTab === key ? "rgba(244,114,182,0.15)" : "transparent",
@@ -586,22 +733,72 @@ export default function HubSiteV3() {
             ))}
           </div>
 
-          {SERVICE_DATA[activePriceTab].packages.map((pkg, i) => (
-            <div key={i} className="price-row" style={{
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-              padding: "16px", marginBottom: "8px", borderRadius: "12px",
-              background: "rgba(30,41,59,0.4)", border: "1px solid rgba(148,163,184,0.08)",
-            }}>
-              <div>
-                <div style={{ fontSize: "15px", fontWeight: 600 }}>{pkg.name}</div>
-                <div style={{ fontSize: "11px", color: "#94A3B8", marginTop: "2px" }}>{pkg.note}</div>
+          <img
+            src={SERVICE_IMAGES[activePriceTab]}
+            alt={activePriceTab}
+            style={{
+              width: "100%", maxHeight: "250px", objectFit: "cover",
+              borderRadius: "12px", marginBottom: "16px",
+              border: "1px solid rgba(244,114,182,0.1)",
+              opacity: 1, transition: "opacity 0.3s ease",
+            }}
+          />
+
+          {SERVICE_DATA[activePriceTab].packages.map((pkg, i) => {
+            const specs = HUB_PACKAGE_SPECS[pkg.name];
+            const isExpanded = expandedSpec === activePriceTab + "_" + pkg.name;
+            return (
+              <div key={i} style={{ marginBottom: "10px" }}>
+                <div className="price-row" style={{
+                  display: "flex", justifyContent: "space-between", alignItems: "center",
+                  padding: "16px", borderRadius: isExpanded ? "12px 12px 0 0" : "12px",
+                  background: "rgba(30,41,59,0.4)", border: "1px solid rgba(148,163,184,0.08)",
+                }}>
+                  <div>
+                    <div style={{ fontSize: "15px", fontWeight: 600 }}>{pkg.name}</div>
+                    <div style={{ fontSize: "11px", color: "#94A3B8", marginTop: "2px" }}>{pkg.note}</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: "18px", fontWeight: 700, color: "#7DD3FC" }}>{pkg.price}</div>
+                    <div style={{ fontSize: "10px", color: "#22C55E", marginTop: "2px" }}>${pkg.deposit} deposit to book</div>
+                  </div>
+                </div>
+                {specs && (
+                  <>
+                    <button
+                      onClick={() => setExpandedSpec(isExpanded ? null : activePriceTab + "_" + pkg.name)}
+                      style={{ width: "100%", padding: "10px 16px", border: "none", borderTop: "1px solid rgba(148,163,184,0.06)", background: "rgba(30,41,59,0.25)", color: "#F472B6", fontSize: "12px", fontWeight: 500, cursor: "pointer", fontFamily: "'Outfit', sans-serif", borderRadius: isExpanded ? "0" : "0 0 12px 12px", transition: "all 0.2s", textAlign: "left" }}
+                    >
+                      {isExpanded ? "Hide Details \u25B4" : "See What\u2019s Included \u25BE"}
+                    </button>
+                    <div style={{ maxHeight: isExpanded ? "1200px" : "0", overflow: "hidden", transition: "max-height 0.4s ease" }}>
+                      <div style={{ background: "rgba(244,114,182,0.04)", border: "1px solid rgba(244,114,182,0.12)", borderTop: "none", borderRadius: "0 0 10px 10px", padding: "16px" }}>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "12px" }}>
+                          <div style={{ display: "inline-block", padding: "4px 10px", borderRadius: "6px", background: "rgba(125,211,252,0.08)", border: "1px solid rgba(125,211,252,0.15)", fontSize: "11px", color: "#7DD3FC" }}>
+                            Estimated Time: {specs.time}
+                          </div>
+                          {specs.capacity && (
+                            <div style={{ display: "inline-block", padding: "4px 10px", borderRadius: "6px", background: "rgba(125,211,252,0.08)", border: "1px solid rgba(125,211,252,0.15)", fontSize: "11px", color: "#7DD3FC" }}>
+                              Capacity: {specs.capacity}
+                            </div>
+                          )}
+                        </div>
+                        {specs.tierUp && (
+                          <p style={{ fontSize: "12px", color: "#F472B6", fontStyle: "italic", margin: "0 0 6px" }}>{specs.tierUp}</p>
+                        )}
+                        {specs.items.map((item, j) => (
+                          <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "3px" }}>
+                            <span style={{ color: "#22C55E", fontSize: "12px", lineHeight: "1.8", flexShrink: 0 }}>{"\u2713"}</span>
+                            <span style={{ fontSize: "13px", color: "#CBD5E1", lineHeight: 1.8 }}>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "18px", fontWeight: 700, color: "#7DD3FC" }}>{pkg.price}</div>
-                <div style={{ fontSize: "10px", color: "#22C55E", marginTop: "2px" }}>${pkg.deposit} deposit to book</div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           <p style={{ textAlign: "center", fontSize: "11px", color: "#94A3B8", marginTop: "12px" }}>
             Deposit secures your appointment. Remaining balance due after completed service. Call to book with no deposit.
