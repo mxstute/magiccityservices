@@ -454,7 +454,55 @@ const SEED_JOBS = [
 // ═══════════════════════════════════════════════════════
 // JOB CALENDAR  (blue glow = completed/past, pink glow = scheduled/future)
 // ═══════════════════════════════════════════════════════
-function JobCalendar({ jobs, compact = false }) {
+// ── Job detail modal (opened from the calendar) ──
+function JobDetailModal({ job, onClose, onView }) {
+  if (!job) return null;
+  const time = job.completedAt && job.completedAt.includes("T")
+    ? new Date(job.completedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })
+    : (job.time || null);
+  const price = Number(job.price) || 0;
+  const deposit = Number(job.deposit) || 0;
+  const row = (label, value, color) => value === null || value === undefined || value === "" ? null : (
+    <div style={{ display: "flex", justifyContent: "space-between", gap: "12px", padding: "7px 0", borderBottom: "1px solid rgba(148,163,184,0.08)" }}>
+      <span style={{ fontSize: "10px", color: "#64748B", textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{label}</span>
+      <span style={{ fontSize: "13px", color: color || "#F8FAFC", fontWeight: 600, textAlign: "right" }}>{value}</span>
+    </div>
+  );
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+      <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: "380px", background: "#0f1424", border: "1px solid rgba(244,114,182,0.2)", borderRadius: "16px", padding: "20px", maxHeight: "85vh", overflowY: "auto", boxShadow: "0 0 30px rgba(244,114,182,0.15)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px", marginBottom: "14px" }}>
+          <div>
+            <div style={{ fontSize: "18px", fontWeight: 700 }}>{job.customerName}</div>
+            <div style={{ fontSize: "12px", color: "#64748B" }}>{job.service}{job.type ? " — " + job.type : (job.package ? " — " + job.package : "")}</div>
+          </div>
+          <span style={{ fontSize: "10px", fontWeight: 700, padding: "3px 10px", borderRadius: "6px", background: (STATUS_COLORS[job.status] || "#64748B") + "18", color: STATUS_COLORS[job.status] || "#64748B", whiteSpace: "nowrap" }}>{job.status}</span>
+        </div>
+        <div style={{ marginBottom: "16px" }}>
+          {row("Date", job.date ? new Date(job.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" }) : null)}
+          {row("Time", time)}
+          {row("Contractor", job.contractor || "Unassigned", job.contractor && job.contractor !== "Unassigned" ? "#60a5fa" : "#F472B6")}
+          {row("Location", job.address)}
+          {row("Phone", job.phone)}
+          {row("Package / Type", job.package || job.type)}
+          {row("Price", price ? fmt(price) : null, "#22C55E")}
+          {row("Deposit collected", deposit ? fmt(deposit) : "None", deposit ? "#FBBF24" : "#64748B")}
+          {row("Balance due", price ? fmt(price - deposit) : null)}
+          {row("Company cut", job.mcsShare != null ? fmt(Number(job.mcsShare)) : null, "#F472B6")}
+          {row("Contractor pay", job.contractorPay != null ? fmt(Number(job.contractorPay)) : null)}
+          {job.notes ? <div style={{ fontSize: "12px", color: "#94A3B8", fontStyle: "italic", marginTop: "10px" }}>{job.notes}</div> : null}
+        </div>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "1px solid rgba(148,163,184,0.15)", background: "transparent", color: "#94A3B8", fontSize: "13px", cursor: "pointer", fontFamily: "inherit" }}>Close</button>
+          {onView && <button onClick={() => onView(job)} style={{ flex: 2, padding: "12px", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #F472B6, #60a5fa)", color: "#0a0e1a", fontSize: "13px", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>View in Jobs →</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function JobCalendar({ jobs, compact = false, setPage, setFocusJobId }) {
+  const [modalJob, setModalJob] = useState(null);
   const now = new Date();
   const [ym, setYm] = useState({ y: now.getFullYear(), m: now.getMonth() });
   const [selected, setSelected] = useState(null);
@@ -523,27 +571,28 @@ function JobCalendar({ jobs, compact = false }) {
       </div>
       {selected && selJobs.length > 0 && (
         <div style={{ marginTop: "12px", borderTop: "1px solid rgba(148,163,184,0.1)", paddingTop: "10px" }}>
-          <div style={{ fontSize: "11px", color: "#94A3B8", fontWeight: 600, marginBottom: "6px" }}>{new Date(selected + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
+          <div style={{ fontSize: "11px", color: "#94A3B8", fontWeight: 600, marginBottom: "6px" }}>{new Date(selected + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} — tap a job for details</div>
           {selJobs.map(j => (
-            <div key={j.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px", borderRadius: "6px", background: "rgba(10,14,26,0.5)", marginBottom: "3px" }}>
-              <div><div style={{ fontSize: "12px", fontWeight: 600 }}>{j.customerName}</div><div style={{ fontSize: "10px", color: "#64748B" }}>{j.service} • {j.contractor}</div></div>
+            <button key={j.id} onClick={() => setModalJob(j)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px", borderRadius: "6px", background: "rgba(10,14,26,0.5)", border: "1px solid rgba(148,163,184,0.08)", marginBottom: "3px", cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
+              <div><div style={{ fontSize: "12px", fontWeight: 600, color: "#F8FAFC" }}>{j.customerName}</div><div style={{ fontSize: "10px", color: "#64748B" }}>{j.service} • {j.contractor}</div></div>
               <div style={{ textAlign: "right" }}><div style={{ fontSize: "12px", fontWeight: 600, color: "#22C55E" }}>{fmt(Number(j.price))}</div><span style={{ fontSize: "9px", color: STATUS_COLORS[j.status] || "#64748B" }}>{j.status}</span></div>
-            </div>
+            </button>
           ))}
         </div>
       )}
+      <JobDetailModal job={modalJob} onClose={() => setModalJob(null)} onView={(j) => { setModalJob(null); if (setFocusJobId) setFocusJobId(j.id); if (setPage) setPage("dispatch"); }} />
     </div>
   );
 }
 
-function CalendarPage({ jobs }) {
+function CalendarPage({ jobs, setPage, setFocusJobId }) {
   const completed = jobs.filter(j => j.status === "Completed" || j.status === "Paid").length;
   const scheduled = jobs.filter(j => !["Completed", "Paid"].includes(j.status)).length;
   return (
     <div>
       <div style={{ fontSize: "18px", fontWeight: 700, marginBottom: "4px" }}>Job Calendar</div>
       <div style={{ fontSize: "12px", color: "#64748B", marginBottom: "14px" }}>{completed} completed • {scheduled} scheduled — tap a highlighted day to see its jobs</div>
-      <JobCalendar jobs={jobs} />
+      <JobCalendar jobs={jobs} setPage={setPage} setFocusJobId={setFocusJobId} />
     </div>
   );
 }
@@ -553,6 +602,7 @@ function MagicCityOps() {
   const [jobs, setJobs] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
+  const [focusJobId, setFocusJobId] = useState(null);
 
   useEffect(() => {
     loadFromStorage(JOBS_KEY).then(data => {
@@ -584,7 +634,7 @@ function MagicCityOps() {
     { id: "calendar", label: "Calendar", icon: "📅" },
   ];
 
-  const pageProps = { jobs, addJob, updateJob, deleteJob, setPage };
+  const pageProps = { jobs, addJob, updateJob, deleteJob, setPage, focusJobId, setFocusJobId };
 
   return (
     <div style={{ minHeight: "100vh", background: "#0a0e1a", color: "#F8FAFC", fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif" }}>
@@ -657,7 +707,7 @@ function MagicCityOps() {
 // HOME / DASHBOARD
 // ═══════════════════════════════════════════════════════
 
-function HomePage({ jobs, setPage }) {
+function HomePage({ jobs, setPage, setFocusJobId }) {
   const completedJobs = jobs.filter(j => j.status === "Completed" || j.status === "Paid");
   const totalRevenue = completedJobs.reduce((s, j) => s + (Number(j.price) || 0), 0);
   const companyShare = completedJobs.reduce((s, j) => {
@@ -735,7 +785,7 @@ function HomePage({ jobs, setPage }) {
       )}
 
       <div style={{ fontSize: "10px", color: "#64748B", letterSpacing: "1.5px", margin: "20px 0 8px", fontWeight: 600 }}>THIS MONTH</div>
-      <JobCalendar jobs={jobs} compact />
+      <JobCalendar jobs={jobs} compact setPage={setPage} setFocusJobId={setFocusJobId} />
 
       <div style={{ marginTop: "20px", padding: "16px", borderRadius: "12px", background: "linear-gradient(135deg, rgba(244,114,182,0.06), rgba(96,165,250,0.06))", border: "1px solid rgba(244,114,182,0.12)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -762,7 +812,14 @@ function HomePage({ jobs, setPage }) {
 // DISPATCH / JOBS
 // ═══════════════════════════════════════════════════════
 
-function DispatchPage({ jobs, addJob, updateJob, deleteJob }) {
+function DispatchPage({ jobs, addJob, updateJob, deleteJob, focusJobId, setFocusJobId }) {
+  useEffect(() => {
+    if (!focusJobId) return;
+    const el = typeof document !== "undefined" ? document.getElementById("job-" + focusJobId) : null;
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    const t = setTimeout(() => setFocusJobId && setFocusJobId(null), 2800);
+    return () => clearTimeout(t);
+  }, [focusJobId]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [filterStatus, setFilterStatus] = useState("All");
@@ -833,7 +890,7 @@ function DispatchPage({ jobs, addJob, updateJob, deleteJob }) {
         const compPct = getCompanySplit(job.contractor);
         const yourCut = job.price ? Math.round(Number(job.price) * compPct / 100) : 0;
         return (
-        <div key={job.id} style={{ background: "rgba(15,20,36,0.7)", borderRadius: "10px", border: "1px solid rgba(148,163,184,0.06)", padding: "12px", marginBottom: "6px" }}>
+        <div key={job.id} id={"job-" + job.id} style={{ background: "rgba(15,20,36,0.7)", borderRadius: "10px", border: focusJobId === job.id ? "1px solid rgba(244,114,182,0.7)" : "1px solid rgba(148,163,184,0.06)", boxShadow: focusJobId === job.id ? "0 0 14px rgba(244,114,182,0.4)" : "none", padding: "12px", marginBottom: "6px", transition: "box-shadow 0.3s, border-color 0.3s" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "6px" }}>
             <div>
               <div style={{ fontSize: "14px", fontWeight: 600 }}>{job.customerName}</div>
