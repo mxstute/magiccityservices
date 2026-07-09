@@ -443,7 +443,110 @@ const SEED_JOBS = [
   { id: "seed_095", serviceLine: "DT", type: "Interior Detail", service: "Mobile Detailing", customerName: "Ingrid Whitfield", phone: "(954) 555-0124", address: "11394 SW 3rd St, Fort Lauderdale, FL 33301", gross: 249, price: 249, deposit: 50, mcsShare: 75, contractor: "K1 Mobile Detailing (Kevin & Clayton)", contractorPay: 174, status: "Completed", date: "2026-06-30", completedAt: "2026-06-30T14:45:00Z", seed: true, seedBatchId: "2026-06-17-placeholder" },
   { id: "seed_096", serviceLine: "DT", type: "Showroom Elite Truck", service: "Mobile Detailing", customerName: "Sofia Chen", phone: "(305) 555-0287", address: "17402 SW 3rd St, Miami, FL 33127", gross: 649, price: 649, deposit: 0, mcsShare: 292, contractor: "Lariel", contractorPay: 357, status: "Completed", date: "2026-07-02", completedAt: "2026-07-02T15:20:00Z", seed: true, seedBatchId: "2026-06-17-placeholder" },
   { id: "seed_097", serviceLine: "DT", type: "Full Detail (custom)", service: "Mobile Detailing", customerName: "Elizabeth Kowalski", phone: "(786) 555-0254", address: "246 SE 3rd Ave, Coral Gables, FL 33134", gross: 492, price: 492, deposit: 0, mcsShare: 221, contractor: "Lariel", contractorPay: 271, status: "Completed", date: "2026-05-25", completedAt: "2026-05-25T15:45:00Z", seed: true, seedBatchId: "2026-06-17-placeholder" },
+  { id: "seed_098", serviceLine: "JR", type: "Full Truck", service: "Junk Removal", customerName: "Gabriel Fontaine", phone: "(305) 555-0231", address: "845 SW 8th St, Miami, FL 33130", gross: 800, price: 800, deposit: 0, mcsShare: 400, contractor: "Kevies McNichols", contractorPay: 400, status: "Dispatched", date: "2026-07-11", completedAt: null, seed: true, seedBatchId: "2026-06-17-placeholder" },
+  { id: "seed_099", serviceLine: "PW", type: "House 2-Story", service: "Pressure Washing", customerName: "Denise Kowalczyk", phone: "(786) 555-0244", address: "1290 NE 2nd Ave, Miami, FL 33132", gross: 675, price: 675, deposit: 0, mcsShare: 338, contractor: "Victor Gonzalez", contractorPay: 337, status: "New", date: "2026-07-14", completedAt: null, seed: true, seedBatchId: "2026-06-17-placeholder" },
+  { id: "seed_100", serviceLine: "DT", type: "Full Detail", service: "Mobile Detailing", customerName: "Andre Beaumont", phone: "(954) 555-0207", address: "3100 N Andrews Ave, Fort Lauderdale, FL 33308", gross: 349, price: 349, deposit: 0, mcsShare: 105, contractor: "K1 Mobile Detailing (Kevin & Clayton)", contractorPay: 244, status: "Dispatched", date: "2026-07-16", completedAt: null, seed: true, seedBatchId: "2026-06-17-placeholder" },
+  { id: "seed_101", serviceLine: "JR", type: "Complete Cleanout", service: "Junk Removal", customerName: "Sylvia Toussaint", phone: "(305) 555-0216", address: "9820 SW 40th St, Miami, FL 33165", gross: 1200, price: 1200, deposit: 0, mcsShare: 600, contractor: "Mason Hyatt", contractorPay: 600, status: "In Progress", date: "2026-07-19", completedAt: null, seed: true, seedBatchId: "2026-06-17-placeholder" },
+  { id: "seed_102", serviceLine: "PW", type: "Driveway + Walkway", service: "Pressure Washing", customerName: "Marcus Reyes", phone: "(786) 555-0259", address: "560 SW 27th Ave, Miami, FL 33135", gross: 300, price: 300, deposit: 0, mcsShare: 135, contractor: "Gerardo Prado", contractorPay: 165, status: "New", date: "2026-07-22", completedAt: null, seed: true, seedBatchId: "2026-06-17-placeholder" },
+  { id: "seed_103", serviceLine: "JR", type: "Half Truck", service: "Junk Removal", customerName: "Hannah Weiss", phone: "(561) 555-0238", address: "4200 N Federal Hwy, Boca Raton, FL 33431", gross: 450, price: 450, deposit: 0, mcsShare: 180, contractor: "Armani Haedo", contractorPay: 270, status: "Dispatched", date: "2026-07-25", completedAt: null, seed: true, seedBatchId: "2026-06-17-placeholder" },
 ];
+
+// ═══════════════════════════════════════════════════════
+// JOB CALENDAR  (blue glow = completed/past, pink glow = scheduled/future)
+// ═══════════════════════════════════════════════════════
+function JobCalendar({ jobs, compact = false }) {
+  const now = new Date();
+  const [ym, setYm] = useState({ y: now.getFullYear(), m: now.getMonth() });
+  const [selected, setSelected] = useState(null);
+  const pad = (n) => String(n).padStart(2, "0");
+
+  const byDate = {};
+  (jobs || []).forEach(j => {
+    if (!j.date) return;
+    const done = j.status === "Completed" || j.status === "Paid";
+    if (!byDate[j.date]) byDate[j.date] = { completed: [], scheduled: [] };
+    byDate[j.date][done ? "completed" : "scheduled"].push(j);
+  });
+
+  const first = new Date(ym.y, ym.m, 1);
+  const startDow = first.getDay();
+  const daysInMonth = new Date(ym.y, ym.m + 1, 0).getDate();
+  const label = first.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const todayStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+
+  const cells = [];
+  for (let i = 0; i < startDow; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${ym.y}-${pad(ym.m + 1)}-${pad(d)}`;
+    cells.push({ d, ds, ...(byDate[ds] || { completed: [], scheduled: [] }) });
+  }
+  const prev = () => setYm(v => v.m === 0 ? { y: v.y - 1, m: 11 } : { y: v.y, m: v.m - 1 });
+  const next = () => setYm(v => v.m === 11 ? { y: v.y + 1, m: 0 } : { y: v.y, m: v.m + 1 });
+
+  const cellH = compact ? 34 : 46;
+  const nav = { background: "rgba(148,163,184,0.1)", border: "1px solid rgba(148,163,184,0.15)", color: "#94A3B8", borderRadius: "8px", width: "28px", height: "28px", cursor: "pointer", fontFamily: "inherit", fontSize: "15px" };
+  const selJobs = selected && byDate[selected] ? [...byDate[selected].completed, ...byDate[selected].scheduled] : [];
+
+  return (
+    <div style={{ background: "rgba(15,20,36,0.6)", border: "1px solid rgba(148,163,184,0.08)", borderRadius: "12px", padding: compact ? "12px" : "16px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+        <button onClick={prev} style={nav}>‹</button>
+        <div style={{ fontSize: compact ? "13px" : "15px", fontWeight: 700 }}>{label}</div>
+        <button onClick={next} style={nav}>›</button>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "3px", marginBottom: "3px" }}>
+        {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => <div key={i} style={{ textAlign: "center", fontSize: "9px", color: "#64748B", fontWeight: 600 }}>{d}</div>)}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "3px" }}>
+        {cells.map((c, i) => {
+          if (!c) return <div key={i} />;
+          const hasC = c.completed.length, hasS = c.scheduled.length;
+          const isToday = c.ds === todayStr;
+          let bg = "rgba(15,20,36,0.4)", border = "1px solid rgba(148,163,184,0.06)", glow = "none", numColor = "#64748B";
+          if (hasC && hasS) { bg = "rgba(167,139,250,0.14)"; border = "1px solid rgba(167,139,250,0.55)"; glow = "0 0 10px rgba(167,139,250,0.45)"; numColor = "#F8FAFC"; }
+          else if (hasC) { bg = "rgba(96,165,250,0.14)"; border = "1px solid rgba(96,165,250,0.55)"; glow = "0 0 10px rgba(96,165,250,0.45)"; numColor = "#F8FAFC"; }
+          else if (hasS) { bg = "rgba(244,114,182,0.14)"; border = "1px solid rgba(244,114,182,0.55)"; glow = "0 0 10px rgba(244,114,182,0.45)"; numColor = "#F8FAFC"; }
+          const count = hasC + hasS;
+          const title = [...c.completed, ...c.scheduled].map(j => `${j.customerName} — ${j.service} ${fmt(Number(j.price))} (${j.status})`).join("\n");
+          return (
+            <button key={i} onClick={() => (hasC || hasS) && setSelected(selected === c.ds ? null : c.ds)} title={title || undefined}
+              style={{ height: cellH + "px", background: bg, border: isToday ? "1px solid #F8FAFC" : border, boxShadow: glow, borderRadius: "8px", cursor: (hasC || hasS) ? "pointer" : "default", fontFamily: "inherit", padding: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1px" }}>
+              <span style={{ fontSize: compact ? "11px" : "13px", color: numColor, fontWeight: isToday ? 700 : 500 }}>{c.d}</span>
+              {count > 0 && <span style={{ fontSize: "8px", fontWeight: 700, color: hasS && !hasC ? "#F472B6" : (hasC && hasS ? "#A78BFA" : "#60a5fa") }}>{count}</span>}
+            </button>
+          );
+        })}
+      </div>
+      <div style={{ display: "flex", gap: "16px", marginTop: "10px", fontSize: "10px", color: "#94A3B8" }}>
+        <span><span style={{ display: "inline-block", width: "9px", height: "9px", borderRadius: "3px", background: "#60a5fa", boxShadow: "0 0 6px rgba(96,165,250,0.7)", marginRight: "6px", verticalAlign: "middle" }} />Completed</span>
+        <span><span style={{ display: "inline-block", width: "9px", height: "9px", borderRadius: "3px", background: "#F472B6", boxShadow: "0 0 6px rgba(244,114,182,0.7)", marginRight: "6px", verticalAlign: "middle" }} />Scheduled</span>
+      </div>
+      {selected && selJobs.length > 0 && (
+        <div style={{ marginTop: "12px", borderTop: "1px solid rgba(148,163,184,0.1)", paddingTop: "10px" }}>
+          <div style={{ fontSize: "11px", color: "#94A3B8", fontWeight: 600, marginBottom: "6px" }}>{new Date(selected + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
+          {selJobs.map(j => (
+            <div key={j.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px", borderRadius: "6px", background: "rgba(10,14,26,0.5)", marginBottom: "3px" }}>
+              <div><div style={{ fontSize: "12px", fontWeight: 600 }}>{j.customerName}</div><div style={{ fontSize: "10px", color: "#64748B" }}>{j.service} • {j.contractor}</div></div>
+              <div style={{ textAlign: "right" }}><div style={{ fontSize: "12px", fontWeight: 600, color: "#22C55E" }}>{fmt(Number(j.price))}</div><span style={{ fontSize: "9px", color: STATUS_COLORS[j.status] || "#64748B" }}>{j.status}</span></div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CalendarPage({ jobs }) {
+  const completed = jobs.filter(j => j.status === "Completed" || j.status === "Paid").length;
+  const scheduled = jobs.filter(j => !["Completed", "Paid"].includes(j.status)).length;
+  return (
+    <div>
+      <div style={{ fontSize: "18px", fontWeight: 700, marginBottom: "4px" }}>Job Calendar</div>
+      <div style={{ fontSize: "12px", color: "#64748B", marginBottom: "14px" }}>{completed} completed • {scheduled} scheduled — tap a highlighted day to see its jobs</div>
+      <JobCalendar jobs={jobs} />
+    </div>
+  );
+}
 
 function MagicCityOps() {
   const [page, setPage] = useState("home");
@@ -478,6 +581,7 @@ function MagicCityOps() {
     { id: "call", label: "Calls", icon: "📞" },
     { id: "followup", label: "Follow-Up", icon: "📲" },
     { id: "team", label: "Team", icon: "👥" },
+    { id: "calendar", label: "Calendar", icon: "📅" },
   ];
 
   const pageProps = { jobs, addJob, updateJob, deleteJob, setPage };
@@ -539,6 +643,7 @@ function MagicCityOps() {
         {page === "call" && <CallPage />}
         {page === "followup" && <FollowUpPage />}
         {page === "team" && <TeamPage />}
+        {page === "calendar" && <CalendarPage {...pageProps} />}
       </div>
 
       <div style={{ padding: "20px 16px", textAlign: "center", fontSize: "9px", color: "rgba(100,116,139,0.4)", letterSpacing: "1.5px" }}>
@@ -614,7 +719,7 @@ function HomePage({ jobs, setPage }) {
       {jobs.length > 0 && (
         <>
           <div style={{ fontSize: "10px", color: "#64748B", letterSpacing: "1.5px", marginBottom: "8px", fontWeight: 600 }}>RECENT JOBS</div>
-          {[...jobs].sort((a, b) => (b.completedAt || b.date || "").localeCompare(a.completedAt || a.date || "")).slice(0, 5).map(job => (
+          {[...jobs].filter(j => ["Completed", "Paid"].includes(j.status)).sort((a, b) => (b.completedAt || b.date || "").localeCompare(a.completedAt || a.date || "")).slice(0, 5).map(job => (
             <div key={job.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", background: "rgba(15,20,36,0.6)", borderRadius: "8px", border: "1px solid rgba(148,163,184,0.06)", marginBottom: "4px" }}>
               <div>
                 <div style={{ fontSize: "13px", fontWeight: 600 }}>{job.customerName}</div>
@@ -628,6 +733,9 @@ function HomePage({ jobs, setPage }) {
           ))}
         </>
       )}
+
+      <div style={{ fontSize: "10px", color: "#64748B", letterSpacing: "1.5px", margin: "20px 0 8px", fontWeight: 600 }}>THIS MONTH</div>
+      <JobCalendar jobs={jobs} compact />
 
       <div style={{ marginTop: "20px", padding: "16px", borderRadius: "12px", background: "linear-gradient(135deg, rgba(244,114,182,0.06), rgba(96,165,250,0.06))", border: "1px solid rgba(244,114,182,0.12)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
