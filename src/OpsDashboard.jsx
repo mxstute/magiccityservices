@@ -94,7 +94,70 @@ const CONTRACTORS = [
   { name: "Matthew Betancurt", services: ["Junk Removal"], phone: "(954) 853-1167", email: "Mbetancurt@gmail.com", status: "pending", split: "50/50", notes: "Sunrise/Broward. JR + demo. Contract sent." },
   { name: "Kevies McNichols", services: ["Junk Removal"], phone: "(786) 212-6016", email: "markmcnichols30@icloud.com", status: "pending", split: "50/50", notes: "2-man crew. DocuSign contract pending." },
   { name: "Camilo Perez", services: ["Pressure Washing", "Junk Removal"], phone: "(305) 303-7781", email: "pcamilo64@yahoo.com", status: "pending", split: "50/50", notes: "PW + JR + plumbing licensed. Future home services anchor." },
-  { name: "Marvin", services: ["Junk Removal"], phone: "(561) 545-2003", email: "", status: "pending", split: "50/50", notes: "26ft box truck. Crew of 3. Need full name + email for contract." },
+  {
+    // Existing Marvin fields preserved — record kept for history, not deleted.
+    name: "Marvin", services: ["Junk Removal"], phone: "(561) 545-2003", email: "", split: "50/50",
+    notes: "26ft box truck. Crew of 3. Need full name + email for contract.",
+    status: "blacklisted",
+    blacklistedAt: "2026-06-17",
+    blacklistReason: "No-showed a confirmed job scheduled 2 days in advance. Read all messages during scheduled window, ignored two phone calls, zero communication. Unrecoverable trust breach.",
+    eligibleForFutureWork: false,
+    onboardingPending: [],
+  },
+  {
+    id: "armani-haedo",
+    name: "Armani Haedo",
+    business: null,
+    services: ["Junk Removal"], // full service name — drives dispatch dropdown + team card
+    serviceLines: ["JR"],
+    phone: "(786) 486-6895",
+    email: null, // TODO: collect from contractor
+    coverage: ["Miami-Dade", "Broward", "Palm Beach"],
+    crewSize: "1 (can scale up)",
+    equipment: "F-150 flatbed truck; box trailer available on request",
+    insurance: { status: "self-reported", coiOnFile: false, minGL: null, additionalInsured: false, signingBonusOffered: false },
+    contract: { status: "unsigned", template: "v2", docusignSentAt: null },
+    status: "active",
+    split: "60/40", // existing UI field (getCompanySplit + card) — mirrors splitTier
+    splitTier: "60/40", // advancement earned after 10+ completed jobs
+    jobsCompleted: 12,
+    rating: null, // TODO: implement rating capture
+    notes: "Solo operator, flexible on last-minute jobs. Bonus payouts documented per-job.",
+    onboardingPending: [
+      "Collect email address",
+      "Request COI: $500K min GL, MCS named as additional insured",
+      "Send DocuSign v2 contract",
+    ],
+    createdAt: "2026-06-17",
+  },
+  {
+    id: "jc-removal",
+    name: "JC Removal", // display/dispatch name (business) — legal name TBD, see onboardingPending
+    legalName: null, // TODO: collect legal name of primary contact
+    business: "JC Removal",
+    services: ["Junk Removal"],
+    serviceLines: ["JR"],
+    phone: "(786) 424-9556",
+    email: null, // TODO: collect from contractor
+    coverage: ["Miami-Dade", "Broward (up to Hollywood/Fort Lauderdale)"],
+    crewSize: "4 (3-man crew + JC)",
+    equipment: "U-Haul rental (per-job)",
+    insurance: { status: "self-reported", coiOnFile: false, minGL: null, additionalInsured: false, signingBonusOffered: false },
+    contract: { status: "unsigned", template: "v2", docusignSentAt: null },
+    status: "active",
+    split: "55/45", // existing UI field — mirrors splitTier
+    splitTier: "55/45", // crew contractor rate per bible
+    jobsCompleted: 5,
+    rating: null,
+    notes: "Larger crew for higher-volume jobs. Renting equipment per-job. No issues on payments so far.",
+    onboardingPending: [
+      "Collect legal name of primary contact",
+      "Collect email address",
+      "Request COI: $500K min GL, MCS named as additional insured",
+      "Send DocuSign v2 contract",
+    ],
+    createdAt: "2026-06-17",
+  },
   { name: "Cristian Vasquez", services: ["Pressure Washing"], phone: "(786) 626-3778", email: "", status: "pending", split: "50/50", notes: "4,400 PSI. Insurance pending." },
 ];
 
@@ -521,7 +584,7 @@ function DispatchPage({ jobs, addJob, updateJob, deleteJob }) {
     return true;
   });
 
-  const availableContractors = [{name:"Unassigned"}, ...CONTRACTORS.filter(c => c.services.includes(form.service))];
+  const availableContractors = [{name:"Unassigned"}, ...CONTRACTORS.filter(c => c.services.includes(form.service) && c.status !== "blacklisted")];
   const inp = { width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid rgba(148,163,184,0.15)", background: "rgba(10,14,26,0.9)", color: "#F8FAFC", fontSize: "13px", fontFamily: "inherit", outline: "none", boxSizing: "border-box" };
   const lbl = { fontSize: "10px", color: "#64748B", display: "block", marginBottom: "4px", letterSpacing: "0.5px", textTransform: "uppercase" };
 
@@ -1061,35 +1124,58 @@ function FollowUpPage() {
 // TEAM / CONTRACTORS
 // ═══════════════════════════════════════════════════════
 
+function ContractorCard({ c }) {
+  const [expanded, setExpanded] = useState(false);
+  const isBlacklisted = c.status === "blacklisted";
+  const pending = c.onboardingPending || [];
+  const statusColors = { active: "#22C55E", pending: "#FBBF24", inactive: "#64748B", blacklisted: "#EF4444" };
+  const sc = statusColors[c.status] || "#64748B";
+  return (
+    <div style={{ padding: "10px 12px", borderRadius: "8px", background: "rgba(15,20,36,0.6)", border: "1px solid rgba(148,163,184,0.06)", borderLeft: isBlacklisted ? "3px solid #EF4444" : "1px solid rgba(148,163,184,0.06)", marginBottom: "4px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <div style={{ fontSize: "13px", fontWeight: 600 }}>{c.name || c.business}</div>
+          <div style={{ fontSize: "11px", color: "#64748B" }}>{(c.services || []).join(" • ")}</div>
+          {c.phone && <div style={{ fontSize: "11px", color: "#60a5fa", marginTop: "2px" }}>{c.phone}</div>}
+          {c.email && <div style={{ fontSize: "10px", color: "#475569" }}>{c.email}</div>}
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <span style={{ fontSize: "9px", fontWeight: 600, padding: "2px 8px", borderRadius: "4px", background: `${sc}15`, color: sc, border: `1px solid ${sc}25` }}>{c.status}</span>
+          {c.split && <div style={{ fontSize: "10px", color: "#F472B6", fontWeight: 600, marginTop: "4px" }}>{c.split}</div>}
+        </div>
+      </div>
+      {c.notes && <div style={{ fontSize: "10px", color: "#475569", marginTop: "4px", fontStyle: "italic" }}>{c.notes}</div>}
+      {isBlacklisted && c.blacklistReason && (
+        <div style={{ fontSize: "10px", color: "#FCA5A5", marginTop: "6px", padding: "6px 8px", borderRadius: "6px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", lineHeight: 1.5 }}>
+          <span style={{ fontWeight: 700, color: "#EF4444" }}>⛔ BLACKLISTED{c.blacklistedAt ? " · " + c.blacklistedAt : ""}:</span> {c.blacklistReason}
+        </div>
+      )}
+      {pending.length > 0 && (
+        <div style={{ marginTop: "6px" }}>
+          <button onClick={() => setExpanded(v => !v)} style={{ cursor: "pointer", fontSize: "9px", fontWeight: 700, padding: "3px 8px", borderRadius: "4px", background: "rgba(251,191,36,0.12)", color: "#FBBF24", border: "1px solid rgba(251,191,36,0.3)", fontFamily: "inherit" }}>
+            ⚠ {pending.length} pending onboarding task{pending.length !== 1 ? "s" : ""} {expanded ? "▲" : "▼"}
+          </button>
+          {expanded && (
+            <ul style={{ margin: "6px 0 0", padding: "0 0 0 18px", fontSize: "10px", color: "#94A3B8", lineHeight: 1.7 }}>
+              {pending.map((t, i) => <li key={i}>{t}</li>)}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function TeamPage() {
   const active = CONTRACTORS.filter(c => c.status === "active");
   const pending = CONTRACTORS.filter(c => c.status === "pending");
-
-  const Badge = ({ status }) => {
-    const colors = { active: "#22C55E", pending: "#FBBF24", inactive: "#64748B" };
-    return <span style={{ fontSize: "9px", fontWeight: 600, padding: "2px 8px", borderRadius: "4px", background: `${colors[status]}15`, color: colors[status], border: `1px solid ${colors[status]}25` }}>{status}</span>;
-  };
+  const blacklisted = CONTRACTORS.filter(c => c.status === "blacklisted");
+  const [showBlacklist, setShowBlacklist] = useState(false);
 
   const renderGroup = (label, list) => list.length > 0 && (
     <div style={{ marginBottom: "16px" }}>
       <div style={{ fontSize: "10px", color: "#64748B", letterSpacing: "1.5px", marginBottom: "6px", fontWeight: 600 }}>{label} ({list.length})</div>
-      {list.map((c, i) => (
-        <div key={i} style={{ padding: "10px 12px", borderRadius: "8px", background: "rgba(15,20,36,0.6)", border: "1px solid rgba(148,163,184,0.06)", marginBottom: "4px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-            <div>
-              <div style={{ fontSize: "13px", fontWeight: 600 }}>{c.name}</div>
-              <div style={{ fontSize: "11px", color: "#64748B" }}>{c.services.join(" • ")}</div>
-              {c.phone && <div style={{ fontSize: "11px", color: "#60a5fa", marginTop: "2px" }}>{c.phone}</div>}
-              {c.email && <div style={{ fontSize: "10px", color: "#475569" }}>{c.email}</div>}
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <Badge status={c.status} />
-              <div style={{ fontSize: "10px", color: "#F472B6", fontWeight: 600, marginTop: "4px" }}>{c.split}</div>
-            </div>
-          </div>
-          {c.notes && <div style={{ fontSize: "10px", color: "#475569", marginTop: "4px", fontStyle: "italic" }}>{c.notes}</div>}
-        </div>
-      ))}
+      {list.map((c, i) => <ContractorCard key={c.id || c.name || i} c={c} />)}
     </div>
   );
 
@@ -1101,6 +1187,15 @@ function TeamPage() {
       </div>
       {renderGroup("DISPATCH-READY", active)}
       {renderGroup("CONTRACTS PENDING", pending)}
+
+      {blacklisted.length > 0 && (
+        <div style={{ marginBottom: "16px" }}>
+          <button onClick={() => setShowBlacklist(v => !v)} style={{ cursor: "pointer", width: "100%", textAlign: "left", fontSize: "10px", color: "#EF4444", letterSpacing: "1.5px", marginBottom: "6px", fontWeight: 600, background: "transparent", border: "none", padding: 0, fontFamily: "inherit" }}>
+            INACTIVE / BLACKLISTED ({blacklisted.length}) {showBlacklist ? "▲" : "▼"}
+          </button>
+          {showBlacklist && blacklisted.map((c, i) => <ContractorCard key={c.id || c.name || i} c={c} />)}
+        </div>
+      )}
 
       <div style={{ padding: "12px", borderRadius: "10px", background: "rgba(244,114,182,0.04)", border: "1px solid rgba(244,114,182,0.1)", marginTop: "12px" }}>
         <div style={{ fontSize: "10px", color: "#F472B6", letterSpacing: "1px", fontWeight: 600, marginBottom: "6px" }}>CALLRAIL NUMBERS</div>
