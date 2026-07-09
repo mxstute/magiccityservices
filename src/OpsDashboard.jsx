@@ -437,10 +437,6 @@ function MagicCityOps() {
   const [jobs, setJobs] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
-  const [showSeed, setShowSeed] = useState(() => { try { return localStorage.getItem("mcs-ops-show-seed") !== "false"; } catch { return true; } });
-  useEffect(() => { try { localStorage.setItem("mcs-ops-show-seed", showSeed ? "true" : "false"); } catch {} }, [showSeed]);
-  const [bannerDismissed, setBannerDismissed] = useState(() => { try { return sessionStorage.getItem("mcs-ops-seed-banner") === "dismissed"; } catch { return false; } });
-  const dismissBanner = () => { setBannerDismissed(true); try { sessionStorage.setItem("mcs-ops-seed-banner", "dismissed"); } catch {} };
 
   useEffect(() => {
     loadFromStorage(JOBS_KEY).then(data => {
@@ -471,11 +467,7 @@ function MagicCityOps() {
     { id: "team", label: "Team", icon: "👥" },
   ];
 
-  const seedJobs = jobs.filter(j => j.seed);
-  const seedCount = seedJobs.length;
-  const seedTotal = seedJobs.reduce((s, j) => s + (Number(j.price) || 0), 0);
-  const visibleJobs = showSeed ? jobs : jobs.filter(j => !j.seed);
-  const pageProps = { jobs: visibleJobs, addJob, updateJob, deleteJob, setPage };
+  const pageProps = { jobs, addJob, updateJob, deleteJob, setPage };
 
   return (
     <div style={{ minHeight: "100vh", background: "#0a0e1a", color: "#F8FAFC", fontFamily: "'Segoe UI', system-ui, -apple-system, sans-serif" }}>
@@ -488,17 +480,9 @@ function MagicCityOps() {
               <div style={{ fontSize: "9px", color: "#64748B", letterSpacing: "1.5px" }}>COMMAND CENTER v2</div>
             </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
-            <div style={{ fontSize: "11px", color: "#94A3B8", textAlign: "right" }}>
-              <span style={{ color: "#22C55E", fontWeight: 600 }}>{visibleJobs.filter(j => j.status === "Completed" || j.status === "Paid").length} completed</span>
-              <span style={{ marginLeft: "8px" }}>{visibleJobs.filter(j => !["Completed","Paid"].includes(j.status)).length} active</span>
-            </div>
-            {seedCount > 0 && (
-              <button onClick={() => setShowSeed(v => !v)} title="Toggle seed / placeholder data"
-                style={{ cursor: "pointer", fontFamily: "inherit", fontSize: "10px", padding: "3px 8px", borderRadius: "6px", border: `1px solid ${showSeed ? "rgba(251,191,36,0.4)" : "rgba(148,163,184,0.25)"}`, background: showSeed ? "rgba(251,191,36,0.12)" : "transparent", color: showSeed ? "#FBBF24" : "#64748B", whiteSpace: "nowrap" }}>
-                {showSeed ? "☑" : "☐"} Show seed data ({seedCount} records, {fmt(seedTotal)})
-              </button>
-            )}
+          <div style={{ fontSize: "11px", color: "#94A3B8", textAlign: "right" }}>
+            <div style={{ color: "#22C55E", fontWeight: 600 }}>{jobs.filter(j => j.status === "Completed" || j.status === "Paid").length} completed</div>
+            <div>{jobs.filter(j => !["Completed","Paid"].includes(j.status)).length} active</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: "2px", padding: "0 8px 8px", overflowX: "auto", scrollbarWidth: "none" }}>
@@ -510,13 +494,6 @@ function MagicCityOps() {
           ))}
         </div>
       </div>
-
-      {showSeed && !bannerDismissed && seedCount > 0 && (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", background: "rgba(251,191,36,0.1)", borderBottom: "1px solid rgba(251,191,36,0.25)", color: "#FBBF24", fontSize: "12px", padding: "8px 16px" }}>
-          <span>⚠ Includes {seedCount} seed job records totaling {fmt(seedTotal)} pending Stripe reconciliation.</span>
-          <button onClick={dismissBanner} title="Dismiss for this session" style={{ cursor: "pointer", background: "none", border: "none", color: "#FBBF24", fontSize: "14px", fontFamily: "inherit", padding: "0 4px", lineHeight: 1 }}>✕</button>
-        </div>
-      )}
 
       {mobileNav && (
         <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex" }}>
