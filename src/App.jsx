@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import AddressAutocomplete from "./AddressAutocomplete";
 
+function trackPhoneClick() { if (typeof gtag === "function") gtag("event", "conversion", { send_to: "AW-18078412608/XZo5CJzT3OccEMDeuqxD" }); }
+
 /*
   MAGIC CITY SERVICES — HUB SITE v3
   Layout: Hero → Booking (section 2) → Pricing → Services → Areas → Footer
@@ -251,7 +253,7 @@ export default function HubSiteV3() {
       }
       setSubmitted(true);
       // Fire Google Ads conversion
-      if (typeof gtag === "function") gtag("event", "conversion", {"send_to": "AW-18078412608/S_40CIGMrZkcEMDeuqxD"});
+      if (typeof gtag === "function") { let bookingValue = 0; try { bookingValue = Number(JSON.parse(saved || "{}").deposit) || 0; } catch (err) {} gtag("event", "conversion", { send_to: "AW-18078412608/S_40CIGMrZkcEMDeuqxD", value: bookingValue, currency: "USD" }); }
       // Clean URL
       window.history.replaceState({}, "", window.location.pathname);
     }
@@ -316,6 +318,7 @@ export default function HubSiteV3() {
         headers: { Accept: "application/json" },
       });
       if (res.ok) {
+        if (typeof gtag === "function") gtag("event", "conversion", { send_to: "AW-18078412608/MT3wCJnT3OccEMDeuqxD" });
         alert("Quote request sent! We'll get back to you within 1 hour during business hours.");
         form.reset();
       } else {
@@ -462,7 +465,7 @@ export default function HubSiteV3() {
           ))}
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <a href="tel:3055703041" className="phone-btn" style={{
+          <a onClick={trackPhoneClick} href="tel:3055703041" className="phone-btn" style={{
             padding: "8px 16px", borderRadius: "20px",
             background: "linear-gradient(135deg, #F472B6, #E04DA0)",
             color: "#fff", fontSize: "12px", fontWeight: 600, textDecoration: "none",
@@ -766,7 +769,7 @@ export default function HubSiteV3() {
                 fontSize: "12px", color: "#22C55E", fontWeight: 500,
               }}>No deposit required — book over the phone for free</div>
               <br />
-              <a href="tel:3055703041" style={{
+              <a onClick={trackPhoneClick} href="tel:3055703041" style={{
                 display: "inline-block", padding: "14px 32px", borderRadius: "12px",
                 background: "linear-gradient(135deg, #F472B6, #E04DA0)",
                 color: "#fff", fontSize: "18px", fontWeight: 700, textDecoration: "none", fontFamily: "inherit",
@@ -929,7 +932,7 @@ export default function HubSiteV3() {
         }}>Magic City Services</div>
         <p style={{ fontSize: "12px", color: "#94A3B8", marginBottom: "12px" }}>Miami-Dade • Broward • Palm Beach</p>
         <p style={{ fontSize: "12px", color: "#F472B6", fontWeight: 600, letterSpacing: "1px", marginBottom: "8px" }}>Contact Us:</p>
-        <a href="tel:3055703041" style={{ fontSize: "14px", color: "#7DD3FC", textDecoration: "none", fontWeight: 600 }}>(305) 570-3041</a>
+        <a onClick={trackPhoneClick} href="tel:3055703041" style={{ fontSize: "14px", color: "#7DD3FC", textDecoration: "none", fontWeight: 600 }}>(305) 570-3041</a>
         <br />
         <a href="mailto:info@magiccityservicesmiami.com" style={{ fontSize: "13px", color: "#F472B6", textDecoration: "none", fontWeight: 500, marginTop: "6px", display: "inline-block" }}>info@magiccityservicesmiami.com</a>
         <p style={{ fontSize: "10px", color: "rgba(148,163,184,0.4)", marginTop: "16px" }}>© 2026 Magic City Services LLC. All rights reserved.</p>
