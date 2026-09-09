@@ -1,5 +1,8 @@
 {
   "rewrites": [
+    { "source": "/sell", "destination": "/sell.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/terms", "destination": "/terms.html" },
     { "source": "/ops", "destination": "/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]

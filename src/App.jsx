@@ -935,6 +935,14 @@ export default function HubSiteV3() {
         <a onClick={trackPhoneClick} href="tel:3055703041" style={{ fontSize: "14px", color: "#7DD3FC", textDecoration: "none", fontWeight: 600 }}>(305) 570-3041</a>
         <br />
         <a href="mailto:info@magiccityservicesmiami.com" style={{ fontSize: "13px", color: "#F472B6", textDecoration: "none", fontWeight: 500, marginTop: "6px", display: "inline-block" }}>info@magiccityservicesmiami.com</a>
+        <div style={{ display: "flex", justifyContent: "center", gap: "18px", flexWrap: "wrap", marginTop: "16px", fontSize: "12px" }}>
+          {[{ label: "Sell Your Property", href: "/sell" }, { label: "Privacy Policy", href: "/privacy" }].map(l => (
+            <a key={l.href} href={l.href} style={{ color: "#94A3B8", textDecoration: "none", transition: "color 0.2s" }}
+              onMouseEnter={e => e.target.style.color = "#F472B6"}
+              onMouseLeave={e => e.target.style.color = "#94A3B8"}
+            >{l.label}</a>
+          ))}
+        </div>
         <p style={{ fontSize: "10px", color: "rgba(148,163,184,0.4)", marginTop: "16px" }}>© 2026 Magic City Services LLC. All rights reserved.</p>
       </footer>
     </div>
