@@ -943,7 +943,7 @@ export default function HubSiteV3() {
             >{l.label}</a>
           ))}
         </div>
-        <p style={{ fontSize: "10px", color: "rgba(148,163,184,0.4)", marginTop: "16px" }}>© 2026 Magic City Services LLC. All rights reserved.</p>
+        <p style={{ fontSize: "10px", color: "rgba(148,163,184,0.4)", marginTop: "16px" }}>© 2026 Magic City Services Miami LLC. All rights reserved.</p>
       </footer>
     </div>
   );
